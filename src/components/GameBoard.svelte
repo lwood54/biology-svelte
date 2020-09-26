@@ -14,10 +14,10 @@
 		let dragItem = document.getElementById(dragItemId);
 		if (!e.target.firstChild || isPiecesContainer) {
 			e.preventDefault();
-			dragItem.style.position = "static";
 			e.target.appendChild(dragItem);
 		} else {
 			e.preventDefault();
+			console.log("running else");
 		}
 	};
 
@@ -45,7 +45,6 @@
 		align-items: center;
 		height: 185px;
 		width: 195px;
-		position: absolute;
 		/* top: 200px;
 		left: 200px; */
 		background-color: teal;

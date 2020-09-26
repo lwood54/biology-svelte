@@ -2,13 +2,13 @@
 	let mouseDown = false;
 
 	const handleMouseMove = (e) => {
-		if (mouseDown && e.target.id) {
+		if (mouseDown && e.target.id && e.target.classList.contains("movable")) {
 			let mItem = document.getElementById(e.target.id);
 			mItem.style.backgroundColor = "blue";
-			mItem.style.top = e.clientY - 165 + "px";
+			// mItem.style.top = e.clientY - mItem.offsetHeight * 0.775 + "px";
+			// mItem.style.left = e.clientX - mItem.offsetWidth * 1.424 + "px";
+			mItem.style.top = e.clientY - 155 + "px";
 			mItem.style.left = e.clientX - 285 + "px";
-			console.log("e.target.id: ", e.target.id);
-			console.log("style.top: ", mItem.style.top);
 		}
 	};
 
@@ -31,10 +31,39 @@
 		justify-content: center;
 		align-items: center;
 		color: white;
+		cursor: move;
+	}
+
+	.not-movable {
+		height: 100px;
+		width: 100px;
+		background-color: turquoise;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		color: white;
+	}
+
+	.movable-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border: 1px solid lightgray;
+		height: 400px;
+		width: 80%;
+	}
+
+	#moveItem3 {
+		height: 100px;
+		width: 100px;
+		background-color: turquoise;
 	}
 </style>
 
 <svelte:window on:mousemove={handleMouseMove} />
-<h1>Movable Divs Practice</h1>
 
-<div class="movable" id="moveItem" on:mousedown={handleMouseDown} on:mouseup={handleMouseUp}>This will move</div>
+<div class="movable-container">
+	<div class="movable" id="moveItem1" on:mousedown={handleMouseDown} on:mouseup={handleMouseUp}>Movable Item 1</div>
+	<div class="movable" id="moveItem2" on:mousedown={handleMouseDown} on:mouseup={handleMouseUp}>Movable Item 2</div>
+	<!-- <div class="movable" id="moveItem3" on:mousedown={handleMouseDown} on:mouseup={handleMouseUp}>Not Movable Item</div> -->
+</div>
