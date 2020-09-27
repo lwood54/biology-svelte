@@ -19,7 +19,7 @@
 	});
 
 	$: if (ctx1) {
-		console.log("current origin: ", obj1.leftX, obj1.topY);
+		// console.log("current origin: ", obj1.leftX, obj1.topY);
 		if (ctx1.fillStyle === "#52cc89") {
 			ctx1.fillStyle = "#30aac2";
 		} else {
@@ -56,7 +56,7 @@
 			// check for collision with other object, sort of works, though at scale this would be really inefficient, look for better way
 			// that checking each possibility for each collision.
 			// if (obj1.topY >= canvas.height - obj1.initH || (obj1.topY + obj1.initH >= obj2.topY && obj1.leftX >= obj2.leftX)) {
-			if (obj1.topY >= canvas.height) {
+			if (obj1.topY >= canvas.height - obj1.initH) {
 				obj1.yDir = -1;
 			} else if (obj1.topY <= 0) {
 				obj1.yDir = 1;
