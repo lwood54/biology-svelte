@@ -1,5 +1,9 @@
 {
-	"title": "Unit 1.3 TITLE woohoo!",
-	"par1": "Things and stuff and words for paragraph 1 for Unit 1.3",
-	"par2": "even more learning words for some stuff that can be learned for Unit 1.3"
+	"title": "Unit 1.3 - Cell Processes and Energy Conversion",
+	"par1": {
+		"content": "Things and stuff and words for paragraph 1 for Unit 1.3"
+	},
+	"par2": {
+		"content": "even more learning words for some stuff that can be learned for Unit 1.3"
+	}
 }
