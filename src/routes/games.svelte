@@ -5,5 +5,5 @@
 <style>
 </style>
 
-<h1>Games</h1>
-<GameBoard />
+<GameBoard
+	game={{ column1Heading: 'col 1 heading', column2Heading: 'col 2 heading' }} />
