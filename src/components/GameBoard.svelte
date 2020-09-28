@@ -18,8 +18,22 @@
 		if (!e.target.firstChild || isPiecesContainer) {
 			if (!isPiecesContainer) {
 				dragItem.style.position = "static";
+				if (
+					e.target.parentNode.classList.contains("c1") ||
+					e.target.parentNode.classList.contains("c3") ||
+					e.target.parentNode.classList.contains("c5")
+				) {
+					console.log("changing dragItem background");
+					dragItem.style.backgroundColor = "transparent";
+					dragItem.style.color = "#77bc43";
+				} else if (e.target.parentNode.classList.contains("c2") || e.target.parentNode.classList.contains("c4")) {
+					dragItem.style.backgroundColor = "transparent";
+					dragItem.style.color = "#0d223f";
+				}
 			} else if (isPiecesContainer) {
 				dragItem.style.position = "absolute";
+				dragItem.style.backgroundColor = "rgb(115, 167, 167)";
+				dragItem.style.color = "rgb(15, 21, 21)";
 			}
 			e.preventDefault();
 			e.target.appendChild(dragItem);
@@ -32,6 +46,10 @@
 </script>
 
 <style>
+	@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+	* {
+		font-family: "Poppins", sans-serif;
+	}
 	.game-page {
 		height: 650px;
 		width: 100%;
@@ -39,7 +57,7 @@
 		max-width: 1500px;
 		margin: auto;
 		/* margin: 0; */
-		background-color: tomato;
+		/* background-color: tomato; */
 		box-sizing: border-box;
 	}
 	.pieces-container {
@@ -53,7 +71,7 @@
 		height: 200px;
 		width: 20%;
 		padding: 1rem;
-		background-color: lightgreen;
+		background-color: rgb(177, 177, 181);
 		box-sizing: border-box;
 		margin: 0;
 	}
@@ -69,15 +87,14 @@
 		/* text-overflow: ellipsis; */ /* ellipsis only works with fixed pixel widths*/
 		/* overflow: hidden; */
 		overflow: auto;
-		padding: 2px;
-		background-color: teal;
-		color: whitesmoke;
+		padding: 2.5px;
+		background-color: rgb(115, 167, 167);
+		color: rgb(15, 21, 21);
+		font-weight: bold;
+		line-height: 1.15rem;
 	}
 	.target-container {
-		border: 1px solid slategray;
-		background-color: moccasin;
 		height: 100%;
-		/* original settings: */
 		width: 100%;
 		display: flex;
 		flex-direction: row;
@@ -95,8 +112,6 @@
 		height: 175px;
 		width: 100%;
 		padding: 5px;
-		background-color: lightblue;
-		/* margin: 1rem 0; */
 		margin: 0;
 		border-radius: 1px;
 		box-sizing: border-box;
@@ -115,15 +130,41 @@
 		box-sizing: border-box;
 	}
 
+	.c1 .target,
+	.c3 .target,
+	.c5 .target {
+		background-color: #0d223f;
+		color: #77bc43;
+	}
+	.c2 .target,
+	.c4 .target {
+		background-color: #77bc43;
+		color: #0d223f;
+	}
+
 	.colHeading {
 		display: flex;
 		justify-content: center;
 		align-items: flex-start;
-		height: 20px;
+		height: auto;
 		margin: 0;
+		font-size: 1.25rem;
+		font-weight: bold;
 		/* padding: 1rem; */
 		/* padding-bottom: 0; */
 		/* border: 1px solid red; */
+	}
+
+	.c1 .colHeading,
+	.c3 .colHeading,
+	.c5 .colHeading {
+		background-color: #77bc43;
+	}
+
+	.c2 .colHeading,
+	.c4 .colHeading {
+		background-color: #0d223f;
+		color: #77bc43;
 	}
 </style>
 
@@ -131,31 +172,31 @@
 
 <div class="game-page" on:drop={dropItem} on:dragover={allowDrop}>
 	<div class="target-container">
-		<div class="column">
+		<div class="column c1">
 			<h3 class="colHeading">{game.column1Heading}</h3>
 			<div id="t1" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t2" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t3" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
-		<div class="column">
+		<div class="column c2">
 			<h3 class="colHeading">{game.column2Heading}</h3>
 			<div id="t4" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t5" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t6" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
-		<div class="column">
+		<div class="column c3">
 			<h3 class="colHeading">{game.column2Heading}</h3>
 			<div id="t7" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t8" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t9" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
-		<div class="column">
+		<div class="column c4">
 			<h3 class="colHeading">{game.column2Heading}</h3>
 			<div id="t10" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t11" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t12" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
-		<div class="column">
+		<div class="column c5">
 			<h3 class="colHeading">{game.column2Heading}</h3>
 			<div id="t13" class="target" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t14" class="target" on:drop={dropItem} on:dragover={allowDrop} />
