@@ -12,5 +12,12 @@
 	},
 	"par3": {
 		"content": "Yet another amazing paragraph 3"
+	},
+	"dndgame": {
+		"col1Heading": "col 1 heading",
+		"col2Heading": "col 2 heading",
+		"col3Heading": "col 3 heading",
+		"col4Heading": "col 4 heading",
+		"col5Heading": "col 5 heading"
 	}
 }
