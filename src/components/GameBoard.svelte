@@ -11,7 +11,8 @@
 
 	const dropItem = (e) => {
 		// define pieces container to allow drop of item back into original spot
-		let isPiecesContainer = e.target.classList.contains("pieces-container");
+		let isPiecesContainer = hasClass(e.target, "pieces-container");
+		// let parent = e.target.parentNode;
 		let dragItemId = e.dataTransfer.getData("text");
 		let dragItem = document.getElementById(dragItemId);
 		// if target to drop in is empty or the target is the pices container, you can drop item in
@@ -23,15 +24,22 @@
 				//
 				if (
 					// check if parent has the odd numbered classes to adjust font color
-					e.target.parentNode.classList.contains("c1") ||
-					e.target.parentNode.classList.contains("c3") ||
-					e.target.parentNode.classList.contains("c5")
+					hasClass(e.target, "col1") ||
+					hasClass(e.target, "col3") ||
+					hasClass(e.target, "col5")
 				) {
 					dragItem.style.backgroundColor = "transparent";
 					dragItem.style.color = "#77bc43";
-				} else if (e.target.parentNode.classList.contains("c2") || e.target.parentNode.classList.contains("c4")) {
+				} else if (hasClass(e.target, "col2") || hasClass(e.target, "col4")) {
 					dragItem.style.backgroundColor = "transparent";
 					dragItem.style.color = "#0d223f";
+				}
+
+				if (!checkIsMatch(e.target, dragItem)) {
+					e.target.style.backgroundColor = "#bf1d1d";
+					dragItem.style.color = "#e8e1e1";
+				} else if (checkIsMatch(e.target, dragItem)) {
+					dragItem.setAttribute("draggable", false);
 				}
 			} else if (isPiecesContainer) {
 				// if being placed back in the pieces container, going back to absolute and resetting bkgrnd & font color
@@ -48,6 +56,36 @@
 	const allowDrop = (e) => {
 		e.preventDefault();
 	};
+
+	const checkIsMatch = (target, dragItem) => {
+		if (hasClass(target, "col1") && hasClass(dragItem, "col1")) {
+			return true;
+		} else if (hasClass(target, "col2") && hasClass(dragItem, "col2")) {
+			return true;
+		} else if (hasClass(target, "col3") && hasClass(dragItem, "col3")) {
+			return true;
+		} else if (hasClass(target, "col4") && hasClass(dragItem, "col4")) {
+			return true;
+		} else if (hasClass(target, "col5") && hasClass(dragItem, "col5")) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+
+	// const;
+
+	const hasClass = (el, clss) => {
+		return el.classList.contains(clss);
+	};
+
+	const handleMouseOver = (e) => {
+		e.target.style.cursor = "grab";
+	};
+
+	const handleMouseDown = (e) => {
+		e.target.style.cursor = "grabbing";
+	};
 </script>
 
 <style>
@@ -58,7 +96,7 @@
 	.game-page {
 		height: 650px;
 		width: 100%;
-		min-width: 800px;
+		min-width: 830px;
 		max-width: 1500px;
 		margin: auto;
 		/* margin: 0; */
@@ -92,12 +130,13 @@
 		/* text-overflow: ellipsis; */ /* ellipsis only works with fixed pixel widths*/
 		/* overflow: hidden; */
 		overflow: auto;
-		padding: 2.5px;
+		padding-top: 15px;
 		background-color: rgb(115, 167, 167);
 		color: rgb(15, 21, 21);
 		font-weight: bold;
 		line-height: 1.15rem;
 		border-radius: 2px;
+		cursor: grab;
 	}
 	.target-container {
 		height: 100%;
@@ -117,7 +156,6 @@
 		text-align: center;
 		height: 175px;
 		width: 100%;
-		padding: 5px;
 		margin: 0;
 		border-radius: 2px;
 		box-sizing: border-box;
@@ -180,37 +218,37 @@
 	<div class="target-container">
 		<div class="column c1">
 			<h3 class="colHeading">{dnd_content.dndgame.col1Heading}</h3>
-			<div id="t1" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t2" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t3" class="target" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t1" class="target col1" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t2" class="target col1" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t3" class="target col1" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 		<div class="column c2">
 			<h3 class="colHeading">{dnd_content.dndgame.col2Heading}</h3>
-			<div id="t4" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t5" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t6" class="target" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t4" class="target col2" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t5" class="target col2" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t6" class="target col2" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 		<div class="column c3">
 			<h3 class="colHeading">{dnd_content.dndgame.col3Heading}</h3>
-			<div id="t7" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t8" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t9" class="target" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t7" class="target col3" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t8" class="target col3" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t9" class="target col3" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 		<div class="column c4">
 			<h3 class="colHeading">{dnd_content.dndgame.col4Heading}</h3>
-			<div id="t10" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t11" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t12" class="target" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t10" class="target col4" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t11" class="target col4" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t12" class="target col4" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 		<div class="column c5">
 			<h3 class="colHeading">{dnd_content.dndgame.col5Heading}</h3>
-			<div id="t13" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t14" class="target" on:drop={dropItem} on:dragover={allowDrop} />
-			<div id="t15" class="target" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t13" class="target col5" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t14" class="target col5" on:drop={dropItem} on:dragover={allowDrop} />
+			<div id="t15" class="target col5" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 	</div>
 	<div class="pieces-container" on:drop={dropItem} on:dragover={allowDrop}>
-		<div id="p1" class="pieces" draggable="true" on:dragstart={dragItem}>
+		<div id="p1" class="pieces col1" draggable="true" on:dragstart={dragItem} on:mouseover={handleMouseOver} on:mousedown={handleMouseDown}>
 			Draggable Item 1 - more stuff and stuff and stuff and stuff and stuff Draggable Item 1 - more stuff and stuff and stuff and stuff and
 		</div>
 	</div>
