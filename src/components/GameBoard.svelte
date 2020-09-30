@@ -73,8 +73,6 @@
 		}
 	};
 
-	// const;
-
 	const hasClass = (el, clss) => {
 		return el.classList.contains(clss);
 	};
@@ -247,9 +245,53 @@
 			<div id="t15" class="target col5" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 	</div>
-	<div class="pieces-container" on:drop={dropItem} on:dragover={allowDrop}>
-		<div id="p1" class="pieces col1" draggable="true" on:dragstart={dragItem} on:mouseover={handleMouseOver} on:mousedown={handleMouseDown}>
-			Draggable Item 1 - more stuff and stuff and stuff and stuff and stuff Draggable Item 1 - more stuff and stuff and stuff and stuff and
+
+	<!-- {#each dnd_content.pieces as piece}
+		<div class="pieces-container" on:drop={dropItem} on:dragover={allowDrop}>
+			<div
+				id={piece.id}
+				class={`pieces ${piece.col}`}
+				draggable="true"
+				on:dragstart={dragItem}
+				on:mouseover={handleMouseOver}
+				on:mousedown={handleMouseDown}>
+				{#if piece.definition}{piece.definition}{:else if piece.hint}{piece.hint}{:else}<img src={piece.pic} alt={piece.alt} />{/if}
+			</div>
 		</div>
+  {/each} -->
+	<div class="pieces-container" on:drop={dropItem} on:dragover={allowDrop}>
+		{#each dnd_content.pieces as piece}
+			{#if piece.definition}
+				<div
+					id={piece.id}
+					class={`pieces ${piece.col}`}
+					draggable="true"
+					on:dragstart={dragItem}
+					on:mouseover={handleMouseOver}
+					on:mousedown={handleMouseDown}>
+					{piece.definition}
+				</div>
+			{:else if piece.hint}
+				<div
+					id={piece.id}
+					class={`pieces ${piece.col}`}
+					draggable="true"
+					on:dragstart={dragItem}
+					on:mouseover={handleMouseOver}
+					on:mousedown={handleMouseDown}>
+					{piece.hint}
+				</div>
+			{:else}
+				<img
+					id={piece.id}
+					class={`pieces ${piece.col}`}
+					draggable="true"
+					on:dragstart={dragItem}
+					on:mouseover={handleMouseOver}
+					on:mousedown={handleMouseDown}
+					src={piece.pic}
+					alt={piece.alt} />
+			{/if}
+		{/each}
 	</div>
 </div>

@@ -19,5 +19,37 @@
 		"col3Heading": "col 3 heading",
 		"col4Heading": "col 4 heading",
 		"col5Heading": "col 5 heading"
-	}
+	},
+	"pieces": [
+		{
+			"id": "p1",
+			"col": "col1",
+			"definition": "This is definition number 1"
+		},
+		{
+			"id": "p2",
+			"col": "col1",
+			"hint": "This is hint number 1"
+		},
+		{
+			"id": "p3",
+			"col": "col1",
+			"pic": "virus.jpg"
+		},
+		{
+			"id": "p4",
+			"col": "col2",
+			"definition": "This is definition number 2"
+		},
+		{
+			"id": "p5",
+			"col": "col2",
+			"hint": "This is hint number 2"
+		},
+		{
+			"id": "p6",
+			"col": "col2",
+			"pic": "lipids.jpeg"
+		}
+	]
 }
