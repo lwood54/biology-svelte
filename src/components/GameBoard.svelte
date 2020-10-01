@@ -51,6 +51,8 @@
 					dragItem.setAttribute("draggable", false);
 					dragItem.style.border = "none";
 					dragItem.style.userSelect = "none";
+					dragItem.style.boxShadow = "none";
+					dragItem.style.cursor = "no-drop";
 				}
 			} else if (isPiecesContainer) {
 				// if being placed back in the pieces container, going back to absolute and resetting bkgrnd & font color
@@ -88,12 +90,16 @@
 		return el.classList.contains(clss);
 	};
 
+	const handleDrag = (e) => {
+		e.target.style.cursor = "grabbing";
+	};
+
 	const handleMouseOver = (e) => {
-		e.target.style.cursor = "grab";
+		// e.target.style.cursor = "grab";
 	};
 
 	const handleMouseDown = (e) => {
-		e.target.style.cursor = "grabbing";
+		// e.target.style.cursor = "grabbing";
 	};
 </script>
 
@@ -147,7 +153,7 @@
 		line-height: 1.15rem;
 		border-radius: 2px;
 		cursor: grab;
-		box-shadow: 1px 1px 1px black;
+		box-shadow: 1px 2px 3px black;
 	}
 	.target-container {
 		/* height: 100%; */
@@ -220,7 +226,7 @@
 		max-height: 130px;
 		padding: 1px;
 		/* width: 165px; */
-		box-shadow: 1px 1px 1px black;
+		box-shadow: 1px 2px 3px black;
 	}
 
 	.img-piece {
@@ -305,6 +311,7 @@
 						src={piece.pic}
 						alt={piece.alt}
 						on:dragstart={dragItem}
+						on:drag={handleDrag}
 						on:mouseover={handleMouseOver}
 						on:mousedown={handleMouseDown} />
 				</div>
