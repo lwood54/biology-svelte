@@ -6,7 +6,11 @@
 	export let dnd_content;
 
 	const dragItem = (e) => {
-		e.dataTransfer.setData("text", e.target.id);
+		if (e.target.tagName === "IMG") {
+			e.dataTransfer.setData("text", e.target.parentNode.id);
+		} else {
+			e.dataTransfer.setData("text", e.target.id);
+		}
 	};
 
 	const dropItem = (e) => {
@@ -29,17 +33,24 @@
 					hasClass(e.target, "col5")
 				) {
 					dragItem.style.backgroundColor = "transparent";
+					e.target.style.backgroundColor = "#0d223f"; // navy blue
 					dragItem.style.color = "#77bc43";
 				} else if (hasClass(e.target, "col2") || hasClass(e.target, "col4")) {
 					dragItem.style.backgroundColor = "transparent";
+					e.target.style.backgroundColor = "#77bc43"; // green
 					dragItem.style.color = "#0d223f";
 				}
 
 				if (!checkIsMatch(e.target, dragItem)) {
-					e.target.style.backgroundColor = "#bf1d1d";
-					dragItem.style.color = "#e8e1e1";
+					e.target.style.backgroundColor = "#bf1d1d"; // bg = red
+					dragItem.style.color = "#e8e1e1"; // font color = light gray
 				} else if (checkIsMatch(e.target, dragItem)) {
+					if (dragItem.childNodes[0].tagName === "IMG") {
+						dragItem.childNodes[0].setAttribute("draggable", false);
+					}
 					dragItem.setAttribute("draggable", false);
+					dragItem.style.border = "none";
+					dragItem.style.userSelect = "none";
 				}
 			} else if (isPiecesContainer) {
 				// if being placed back in the pieces container, going back to absolute and resetting bkgrnd & font color
@@ -87,9 +98,9 @@
 </script>
 
 <style>
-	@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+	@import url("https://fonts.googleapis.com/css2?family=Spartan:wght@100;200;300;400;500&display=swap");
 	* {
-		font-family: "Poppins", sans-serif;
+		font-family: "Spartan", sans-serif;
 	}
 	.game-page {
 		height: 650px;
@@ -103,15 +114,16 @@
 	}
 	.pieces-container {
 		display: flex;
-		justify-content: space-evenly;
-		border: 1px solid slategray;
+		justify-content: center;
+		align-items: center;
+		/* border: 1px solid slategray; */
 		position: absolute;
 		/* position: absolute;
 		bottom: 0;
 		left: 0; */
-		height: 200px;
+		height: 145px;
 		width: 20%;
-		padding: 1rem;
+		padding: 2px;
 		background-color: rgb(177, 177, 181);
 		box-sizing: border-box;
 		margin: 0;
@@ -120,24 +132,26 @@
 	.pieces {
 		display: flex;
 		justify-content: center;
+		align-items: center;
 		text-align: center;
 		align-items: top;
-		height: 165px;
-		width: 90%;
+		height: 95px;
+		max-width: 80%;
+		min-width: 50px;
 		position: absolute;
-		/* text-overflow: ellipsis; */ /* ellipsis only works with fixed pixel widths*/
-		/* overflow: hidden; */
 		overflow: auto;
-		padding-top: 15px;
+		padding: 10px;
 		background-color: rgb(115, 167, 167);
 		color: rgb(15, 21, 21);
 		font-weight: bold;
 		line-height: 1.15rem;
 		border-radius: 2px;
 		cursor: grab;
+		box-shadow: 1px 1px 1px black;
 	}
 	.target-container {
-		height: 100%;
+		/* height: 100%; */
+		height: 70%;
 		width: 100%;
 		display: flex;
 		flex-direction: row;
@@ -152,7 +166,8 @@
 		justify-content: center;
 		align-items: center;
 		text-align: center;
-		height: 175px;
+		/* height: 175px; */
+		height: 130px;
 		width: 100%;
 		margin: 0;
 		border-radius: 2px;
@@ -187,14 +202,30 @@
 	.colHeading {
 		display: flex;
 		justify-content: center;
-		align-items: flex-start;
-		height: auto;
+		align-items: center;
+		/* height: auto; */
 		margin: 0;
-		font-size: 1.25rem;
+		height: 35px;
+		font-size: 1rem;
 		font-weight: bold;
 		/* padding: 1rem; */
 		/* padding-bottom: 0; */
 		/* border: 1px solid red; */
+	}
+
+	.img-container {
+		/* max-height: 165px;
+		min-height: 100px;
+    max-width: auto; */
+		max-height: 130px;
+		padding: 1px;
+		/* width: 165px; */
+		box-shadow: 1px 1px 1px black;
+	}
+
+	.img-piece {
+		max-height: 120px;
+		/* max-width: 165px; */
 	}
 
 	.c1 .colHeading,
@@ -208,9 +239,18 @@
 		background-color: #0d223f;
 		color: #77bc43;
 	}
+
+	.score-container {
+		width: 100%;
+		margin-left: 50%;
+	}
 </style>
 
 <!-- <svelte:window on:mousemove={handleMouseMove} /> -->
+
+<svelte:head>
+	<title>Drag N Drop 1.1</title>
+</svelte:head>
 
 <div class="game-page" on:drop={dropItem} on:dragover={allowDrop}>
 	<div class="target-container">
@@ -246,22 +286,9 @@
 		</div>
 	</div>
 
-	<!-- {#each dnd_content.pieces as piece}
-		<div class="pieces-container" on:drop={dropItem} on:dragover={allowDrop}>
-			<div
-				id={piece.id}
-				class={`pieces ${piece.col}`}
-				draggable="true"
-				on:dragstart={dragItem}
-				on:mouseover={handleMouseOver}
-				on:mousedown={handleMouseDown}>
-				{#if piece.definition}{piece.definition}{:else if piece.hint}{piece.hint}{:else}<img src={piece.pic} alt={piece.alt} />{/if}
-			</div>
-		</div>
-  {/each} -->
 	<div class="pieces-container" on:drop={dropItem} on:dragover={allowDrop}>
 		{#each dnd_content.pieces as piece}
-			{#if piece.definition}
+			{#if piece.definition || piece.hint}
 				<div
 					id={piece.id}
 					class={`pieces ${piece.col}`}
@@ -269,29 +296,23 @@
 					on:dragstart={dragItem}
 					on:mouseover={handleMouseOver}
 					on:mousedown={handleMouseDown}>
-					{piece.definition}
-				</div>
-			{:else if piece.hint}
-				<div
-					id={piece.id}
-					class={`pieces ${piece.col}`}
-					draggable="true"
-					on:dragstart={dragItem}
-					on:mouseover={handleMouseOver}
-					on:mousedown={handleMouseDown}>
-					{piece.hint}
+					{piece.definition ? piece.definition : piece.hint}
 				</div>
 			{:else}
-				<img
-					id={piece.id}
-					class={`pieces ${piece.col}`}
-					draggable="true"
-					on:dragstart={dragItem}
-					on:mouseover={handleMouseOver}
-					on:mousedown={handleMouseDown}
-					src={piece.pic}
-					alt={piece.alt} />
+				<div id={piece.id} class={`pieces ${piece.col} img-container`} draggable="true">
+					<img
+						class="img-piece"
+						src={piece.pic}
+						alt={piece.alt}
+						on:dragstart={dragItem}
+						on:mouseover={handleMouseOver}
+						on:mousedown={handleMouseDown} />
+				</div>
 			{/if}
 		{/each}
+	</div>
+	<div class="score-container">
+		<div class="correct-score"># correct: 1</div>
+		<div class="wrong-score"># wrong: 1</div>
 	</div>
 </div>
