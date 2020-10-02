@@ -1,5 +1,6 @@
 <script>
 	import Content from "../routes/content.svelte";
+	import { scoreCorrectCount, scoreWrongCount } from "../stores/dnd_game_store";
 
 	let mouseDown = false;
 
@@ -42,11 +43,16 @@
 				}
 
 				if (!checkIsMatch(e.target, dragItem)) {
+					scoreWrongCount.update((score) => score + 1);
 					e.target.style.backgroundColor = "#bf1d1d"; // bg = red
 					dragItem.style.color = "#e8e1e1"; // font color = light gray
 				} else if (checkIsMatch(e.target, dragItem)) {
+					scoreCorrectCount.update((score) => score + 1);
 					if (dragItem.childNodes[0].tagName === "IMG") {
 						dragItem.childNodes[0].setAttribute("draggable", false);
+						dragItem.childNodes[0].style.cursor = "no-drop";
+					} else {
+						dragItem.style.overflow = "auto";
 					}
 					dragItem.setAttribute("draggable", false);
 					dragItem.style.border = "none";
@@ -128,25 +134,27 @@
 		bottom: 0;
 		left: 0; */
 		height: 145px;
-		width: 20%;
+		/* max-width: 195px;
+    min-width: 175px; */
+		width: 245px;
 		padding: 2px;
 		background-color: rgb(177, 177, 181);
 		box-sizing: border-box;
-		margin: 0;
+		margin: 0 0 5px 10px;
 	}
 
 	.pieces {
 		display: flex;
 		justify-content: center;
-		align-items: center;
+		/* align-items: center; */
 		text-align: center;
 		align-items: top;
-		height: 95px;
-		max-width: 80%;
-		min-width: 50px;
+		height: 110px;
+		max-width: 90%;
 		position: absolute;
-		overflow: auto;
-		padding: 10px;
+		/* overflow: auto; */
+		overflow: hidden;
+		padding-top: 10px;
 		background-color: rgb(115, 167, 167);
 		color: rgb(15, 21, 21);
 		font-weight: bold;
@@ -155,6 +163,15 @@
 		cursor: grab;
 		box-shadow: 1px 2px 3px black;
 	}
+
+	.pieces::-webkit-scrollbar {
+		display: none;
+	}
+
+	.pieces.text {
+		overflow: auto;
+	}
+
 	.target-container {
 		/* height: 100%; */
 		height: 70%;
@@ -250,6 +267,12 @@
 		width: 100%;
 		margin-left: 50%;
 	}
+
+	@media screen and (max-width: 1120px) {
+		.pieces-container {
+			margin-left: 8px;
+		}
+	}
 </style>
 
 <!-- <svelte:window on:mousemove={handleMouseMove} /> -->
@@ -297,7 +320,7 @@
 			{#if piece.definition || piece.hint}
 				<div
 					id={piece.id}
-					class={`pieces ${piece.col}`}
+					class={`pieces ${piece.col} text`}
 					draggable="true"
 					on:dragstart={dragItem}
 					on:mouseover={handleMouseOver}
@@ -319,7 +342,7 @@
 		{/each}
 	</div>
 	<div class="score-container">
-		<div class="correct-score"># correct: 1</div>
-		<div class="wrong-score"># wrong: 1</div>
+		<div class="correct-score"># correct: {$scoreCorrectCount}</div>
+		<div class="wrong-score"># wrong: {$scoreWrongCount}</div>
 	</div>
 </div>

@@ -29,12 +29,13 @@
 		{
 			"id": "p2",
 			"col": "col1",
-			"hint": "This is hint number 1"
+			"hint": "This is hint number 1 so get it right."
 		},
 		{
 			"id": "p3",
 			"col": "col1",
-			"pic": "virus.jpg"
+			"pic": "virus.jpg",
+			"alt": "virus"
 		},
 		{
 			"id": "p4",
@@ -44,12 +45,13 @@
 		{
 			"id": "p5",
 			"col": "col2",
-			"hint": "This is hint number 2"
+			"hint": "I'm baby seitan photo booth kombucha adaptogen, adaptogen lumbersexual palo santo"
 		},
 		{
 			"id": "p6",
 			"col": "col2",
-			"pic": "lipids.jpeg"
+			"pic": "lipids.jpeg",
+			"alt": "lipids"
 		}
 	]
 }
