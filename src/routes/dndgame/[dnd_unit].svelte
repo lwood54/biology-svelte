@@ -10,6 +10,7 @@
 
 <script>
 	import GameBoard from "../../components/GameBoard.svelte";
+	import { fade } from "svelte/transition";
 
 	export let dnd_content;
 
@@ -21,7 +22,11 @@
 </script>
 
 {#if updatedRound === 1}
-	<GameBoard colHeadings={dnd_content.dndgame1} pieces={dnd_content.pieces1} on:checkround={updateRound} round={1} />
+	<div out:fade>
+		<GameBoard colHeadings={dnd_content.dndgame1} pieces={dnd_content.pieces1} on:checkround={updateRound} round={1} />
+	</div>
 {:else}
-	<GameBoard colHeadings={dnd_content.dndgame2} pieces={dnd_content.pieces2} on:checkround={updateRound} round={2} />
+	<div in:fade>
+		<GameBoard colHeadings={dnd_content.dndgame2} pieces={dnd_content.pieces2} on:checkround={updateRound} round={2} />
+	</div>
 {/if}

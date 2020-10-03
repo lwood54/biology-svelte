@@ -204,7 +204,6 @@
 		padding-top: 10px;
 		background-color: rgb(115, 167, 167);
 		color: rgb(15, 21, 21);
-		/* font-weight: bold; */
 		line-height: 1.15rem;
 		border-radius: 2px;
 		cursor: grab;
@@ -282,7 +281,6 @@
 		margin: 0;
 		height: 35px;
 		font-size: 1rem;
-		/* font-weight: bold; */
 	}
 
 	.img-container {
