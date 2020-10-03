@@ -12,6 +12,12 @@
 	import GameBoard from "../../components/GameBoard.svelte";
 
 	export let dnd_content;
+
+	$: round = 1;
+
+	const checkRoundStatus = (roundCmoplete) => {};
 </script>
 
-<GameBoard {dnd_content} />
+<GameBoard colHeadings={dnd_content.dndgame1} pieces={dnd_content.pieces1} on:checkround={checkRoundStatus} round={1} />
+
+<GameBoard colHeadings={dnd_content.dndgame2} pieces={dnd_content.pieces2} on:checkround={checkRoundStatus} round={2} />

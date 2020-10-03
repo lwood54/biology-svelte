@@ -1,10 +1,36 @@
 <script>
+	import { onMount, createEventDispatcher } from "svelte";
+
 	import Content from "../routes/content.svelte";
 	import { scoreCorrectCount, scoreWrongCount } from "../stores/dnd_game_store";
 
-	let mouseDown = false;
+	// export let dnd_content;
+	export let colHeadings;
+	export let pieces;
+	export let round;
 
-	export let dnd_content;
+	const dispatch = createEventDispatcher();
+
+	let piecesArray = [];
+	let piecesLeft = 15;
+
+	onMount(() => {
+		piecesArray = [...pieces];
+		piecesArray = shuffleArray(piecesArray);
+	});
+
+	const shuffleArray = (array) => {
+		// copy array to manipulate
+		let arrayCopy = [...array];
+		let mixedArray = [];
+		// loop through copy until no elements left
+		while (arrayCopy.length > 0) {
+			let randNum = Math.floor(Math.random() * arrayCopy.length);
+			// add removed elements to mixedArray as looping occurs
+			mixedArray.push(arrayCopy.splice(randNum, 1)[0]);
+		}
+		return mixedArray;
+	};
 
 	const dragItem = (e) => {
 		if (e.target.tagName === "IMG") {
@@ -69,11 +95,17 @@
 			// now the actual placement occurs
 			e.preventDefault();
 			e.target.appendChild(dragItem);
+			let piecesCont = round === 1 ? document.getElementById("piecesCont1") : document.getElementById("piecesCont2");
+			piecesLeft = checkPiecesLeft(piecesCont);
 		}
 	};
 
 	const allowDrop = (e) => {
 		e.preventDefault();
+	};
+
+	const handleDrag = (e) => {
+		e.target.style.cursor = "grabbing";
 	};
 
 	const checkIsMatch = (target, dragItem) => {
@@ -96,16 +128,10 @@
 		return el.classList.contains(clss);
 	};
 
-	const handleDrag = (e) => {
-		e.target.style.cursor = "grabbing";
-	};
-
-	const handleMouseOver = (e) => {
-		// e.target.style.cursor = "grab";
-	};
-
-	const handleMouseDown = (e) => {
-		// e.target.style.cursor = "grabbing";
+	const checkPiecesLeft = (el) => {
+		const numChildNodes = el.childNodes.length;
+		console.log("number of children left: ", numChildNodes);
+		return numChildNodes;
 	};
 </script>
 
@@ -120,22 +146,14 @@
 		min-width: 830px;
 		max-width: 1500px;
 		margin: auto;
-		/* margin: 0; */
-		/* background-color: tomato; */
 		box-sizing: border-box;
 	}
 	.pieces-container {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		/* border: 1px solid slategray; */
 		position: absolute;
-		/* position: absolute;
-		bottom: 0;
-		left: 0; */
 		height: 145px;
-		/* max-width: 195px;
-    min-width: 175px; */
 		width: 245px;
 		padding: 2px;
 		background-color: rgb(177, 177, 181);
@@ -146,13 +164,11 @@
 	.pieces {
 		display: flex;
 		justify-content: center;
-		/* align-items: center; */
 		text-align: center;
 		align-items: top;
 		height: 110px;
 		max-width: 90%;
 		position: absolute;
-		/* overflow: auto; */
 		overflow: hidden;
 		padding-top: 10px;
 		background-color: rgb(115, 167, 167);
@@ -173,7 +189,6 @@
 	}
 
 	.target-container {
-		/* height: 100%; */
 		height: 70%;
 		width: 100%;
 		display: flex;
@@ -189,7 +204,6 @@
 		justify-content: center;
 		align-items: center;
 		text-align: center;
-		/* height: 175px; */
 		height: 130px;
 		width: 100%;
 		margin: 0;
@@ -226,29 +240,20 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		/* height: auto; */
 		margin: 0;
 		height: 35px;
 		font-size: 1rem;
 		font-weight: bold;
-		/* padding: 1rem; */
-		/* padding-bottom: 0; */
-		/* border: 1px solid red; */
 	}
 
 	.img-container {
-		/* max-height: 165px;
-		min-height: 100px;
-    max-width: auto; */
 		max-height: 130px;
 		padding: 1px;
-		/* width: 165px; */
 		box-shadow: 1px 2px 3px black;
 	}
 
 	.img-piece {
 		max-height: 120px;
-		/* max-width: 165px; */
 	}
 
 	.c1 .colHeading,
@@ -275,8 +280,6 @@
 	}
 </style>
 
-<!-- <svelte:window on:mousemove={handleMouseMove} /> -->
-
 <svelte:head>
 	<title>Drag N Drop 1.1</title>
 </svelte:head>
@@ -284,59 +287,47 @@
 <div class="game-page" on:drop={dropItem} on:dragover={allowDrop}>
 	<div class="target-container">
 		<div class="column c1">
-			<h3 class="colHeading">{dnd_content.dndgame.col1Heading}</h3>
+			<h3 class="colHeading">{colHeadings.col1Heading}</h3>
 			<div id="t1" class="target col1" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t2" class="target col1" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t3" class="target col1" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 		<div class="column c2">
-			<h3 class="colHeading">{dnd_content.dndgame.col2Heading}</h3>
+			<h3 class="colHeading">{colHeadings.col2Heading}</h3>
 			<div id="t4" class="target col2" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t5" class="target col2" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t6" class="target col2" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 		<div class="column c3">
-			<h3 class="colHeading">{dnd_content.dndgame.col3Heading}</h3>
+			<h3 class="colHeading">{colHeadings.col3Heading}</h3>
 			<div id="t7" class="target col3" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t8" class="target col3" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t9" class="target col3" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 		<div class="column c4">
-			<h3 class="colHeading">{dnd_content.dndgame.col4Heading}</h3>
+			<h3 class="colHeading">{colHeadings.col4Heading}</h3>
 			<div id="t10" class="target col4" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t11" class="target col4" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t12" class="target col4" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 		<div class="column c5">
-			<h3 class="colHeading">{dnd_content.dndgame.col5Heading}</h3>
+			<h3 class="colHeading">{colHeadings.col5Heading}</h3>
 			<div id="t13" class="target col5" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t14" class="target col5" on:drop={dropItem} on:dragover={allowDrop} />
 			<div id="t15" class="target col5" on:drop={dropItem} on:dragover={allowDrop} />
 		</div>
 	</div>
 
-	<div class="pieces-container" on:drop={dropItem} on:dragover={allowDrop}>
-		{#each dnd_content.pieces as piece}
+	<div class="pieces-container" id={round === 1 ? 'piecesCont1' : 'piecesCont2'} on:drop={dropItem} on:dragover={allowDrop}>
+		<!-- {#each dnd_content.pieces as piece} -->
+		{#each piecesArray as piece, i}
 			{#if piece.definition || piece.hint}
-				<div
-					id={piece.id}
-					class={`pieces ${piece.col} text`}
-					draggable="true"
-					on:dragstart={dragItem}
-					on:mouseover={handleMouseOver}
-					on:mousedown={handleMouseDown}>
+				<div id={piece.id} class={`pieces ${piece.col} text`} draggable="true" on:dragstart={dragItem}>
 					{piece.definition ? piece.definition : piece.hint}
 				</div>
 			{:else}
 				<div id={piece.id} class={`pieces ${piece.col} img-container`} draggable="true">
-					<img
-						class="img-piece"
-						src={piece.pic}
-						alt={piece.alt}
-						on:dragstart={dragItem}
-						on:drag={handleDrag}
-						on:mouseover={handleMouseOver}
-						on:mousedown={handleMouseDown} />
+					<img class="img-piece" src={piece.pic} alt={piece.alt} on:dragstart={dragItem} on:drag={handleDrag} />
 				</div>
 			{/if}
 		{/each}

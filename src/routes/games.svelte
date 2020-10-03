@@ -1,9 +1,7 @@
 <script>
-	import GameBoard from "../components/GameBoard.svelte";
 </script>
 
 <style>
 </style>
 
-<GameBoard
-	game={{ column1Heading: 'col 1 heading', column2Heading: 'col 2 heading' }} />
+<h1><a href="/dndgame/unit1_1">Unit 1.1 Game</a></h1>
