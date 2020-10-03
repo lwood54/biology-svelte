@@ -64,6 +64,10 @@
 			if (!isPiecesContainer) {
 				// setting to static position so the div will be relative to parent
 				dragItem.style.position = "static";
+				// must make visible again because I am hadding all stacked pieces in
+				// the pieces container to display only the top piece so as to not
+				// stack box-shadows
+				dragItem.style.visibility = "visible";
 				//
 				if (
 					// check if parent has the odd numbered classes to adjust font color
@@ -200,11 +204,19 @@
 		padding-top: 10px;
 		background-color: rgb(115, 167, 167);
 		color: rgb(15, 21, 21);
-		font-weight: bold;
+		/* font-weight: bold; */
 		line-height: 1.15rem;
 		border-radius: 2px;
 		cursor: grab;
 		box-shadow: 1px 2px 3px black;
+		visibility: hidden;
+	}
+
+	/* only show first div in container helps prevent
+  stacking up of box-shadow
+  NOTE: make sure to have any dropped divs in targets visible */
+	.pieces-container div:first-of-type {
+		visibility: visible;
 	}
 
 	.pieces::-webkit-scrollbar {
@@ -270,7 +282,7 @@
 		margin: 0;
 		height: 35px;
 		font-size: 1rem;
-		font-weight: bold;
+		/* font-weight: bold; */
 	}
 
 	.img-container {
@@ -358,6 +370,7 @@
 			{/if}
 		{/each}
 	</div>
+
 	<div class="score-container">
 		<div class="correct-score"># total correct: {$totalCorrect}</div>
 		<div class="wrong-score"># total wrong: {$totalWrong}</div>
