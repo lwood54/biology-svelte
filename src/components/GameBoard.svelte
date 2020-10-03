@@ -1,5 +1,6 @@
 <script>
 	import { onMount, createEventDispatcher } from "svelte";
+	import { fade } from "svelte/transition";
 
 	import Content from "../routes/content.svelte";
 	import { totalCorrect, totalWrong, round1Correct, round1Wrong, round2Correct, round2Wrong } from "../stores/dnd_game_store";
@@ -8,12 +9,14 @@
 	export let colHeadings;
 	export let pieces;
 	export let round;
+	export let title;
 
 	const dispatch = createEventDispatcher();
 
 	$: if (piecesLeft <= 15) {
 		// if current round is 1, then change to 2, else change to 3
 		round = round === 1 ? 2 : 3;
+		console.log("current round: ", round);
 		dispatch("checkround", round);
 	}
 
@@ -179,17 +182,20 @@
 		margin: auto;
 		box-sizing: border-box;
 	}
-	.pieces-container {
+
+	.game-bar {
 		display: flex;
-		justify-content: center;
-		align-items: center;
-		position: absolute;
+		justify-content: space-between;
+		margin: 0.75rem;
+	}
+
+	.pieces-container {
 		height: 145px;
-		width: 245px;
-		padding: 2px;
-		background-color: rgb(177, 177, 181);
-		box-sizing: border-box;
-		margin: 0 0 5px 10px;
+		width: 25%;
+		display: flex;
+		justify-content: flex-end;
+		align-items: flex-start;
+		position: relative;
 	}
 
 	.pieces {
@@ -224,6 +230,21 @@
 
 	.pieces.text {
 		overflow: auto;
+	}
+
+	.img-container {
+		max-height: 130px;
+		padding: 1px;
+		box-shadow: 1px 2px 3px black;
+	}
+
+	.img-piece {
+		max-height: 120px;
+	}
+
+	.score-container {
+		/* width: 100%; */
+		/* margin-left: 50%; */
 	}
 
 	.target-container {
@@ -283,16 +304,6 @@
 		font-size: 1rem;
 	}
 
-	.img-container {
-		max-height: 130px;
-		padding: 1px;
-		box-shadow: 1px 2px 3px black;
-	}
-
-	.img-piece {
-		max-height: 120px;
-	}
-
 	.c1 .colHeading,
 	.c3 .colHeading,
 	.c5 .colHeading {
@@ -305,11 +316,6 @@
 		color: #77bc43;
 	}
 
-	.score-container {
-		width: 100%;
-		margin-left: 50%;
-	}
-
 	@media screen and (max-width: 1120px) {
 		.pieces-container {
 			margin-left: 8px;
@@ -318,7 +324,7 @@
 </style>
 
 <svelte:head>
-	<title>Drag N Drop 1.1</title>
+	<title>{title}</title>
 </svelte:head>
 
 <div class="game-page" on:drop={dropItem} on:dragover={allowDrop}>
@@ -355,24 +361,25 @@
 		</div>
 	</div>
 
-	<div class="pieces-container" id={round === 1 ? 'piecesCont1' : 'piecesCont2'} on:drop={dropItem} on:dragover={allowDrop}>
-		{#each piecesArray as piece, i}
-			{#if piece.definition || piece.hint}
-				<div id={piece.id} class={`pieces ${piece.col} text`} draggable="true" on:dragstart={dragItem}>
-					{piece.definition ? piece.definition : piece.hint}
-				</div>
-			{:else}
-				<div id={piece.id} class={`pieces ${piece.col} img-container`} draggable="true">
-					<img class="img-piece" src={piece.pic} alt={piece.alt} on:dragstart={dragItem} on:drag={handleDrag} />
-				</div>
-			{/if}
-		{/each}
-	</div>
-
-	<div class="score-container">
-		<div class="correct-score"># total correct: {$totalCorrect}</div>
-		<div class="wrong-score"># total wrong: {$totalWrong}</div>
-		<div class="wrong-score"># round {round} wrong: {round === 1 ? $round1Wrong : $round2Wrong}</div>
-		<div class="wrong-score"># round {round} correct: {round === 1 ? $round1Correct : $round2Correct}</div>
+	<div class="game-bar">
+		<div class="score-container">
+			<div class="correct-score">total correct: {$totalCorrect}</div>
+			<div class="wrong-score">total wrong: {$totalWrong}</div>
+			<div class="wrong-score">round {round} wrong: {round === 1 ? $round1Wrong : $round2Wrong}</div>
+			<div class="wrong-score">round {round} correct: {round === 1 ? $round1Correct : $round2Correct}</div>
+		</div>
+		<div class="pieces-container" id={round === 1 ? 'piecesCont1' : 'piecesCont2'} on:drop={dropItem} on:dragover={allowDrop}>
+			{#each piecesArray as piece, i}
+				{#if piece.definition || piece.hint}
+					<div in:fade id={piece.id} class={`pieces ${piece.col} text`} draggable="true" on:dragstart={dragItem}>
+						{piece.definition ? piece.definition : piece.hint}
+					</div>
+				{:else}
+					<div in:fade id={piece.id} class={`pieces ${piece.col} img-container`} draggable="true">
+						<img class="img-piece" src={piece.pic} alt={piece.alt} on:dragstart={dragItem} on:drag={handleDrag} />
+					</div>
+				{/if}
+			{/each}
+		</div>
 	</div>
 </div>
