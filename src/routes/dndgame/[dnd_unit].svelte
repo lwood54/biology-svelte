@@ -13,11 +13,15 @@
 
 	export let dnd_content;
 
-	$: round = 1;
+	$: updatedRound = 1;
 
-	const checkRoundStatus = (roundCmoplete) => {};
+	const updateRound = (round) => {
+		updatedRound = round;
+	};
 </script>
 
-<GameBoard colHeadings={dnd_content.dndgame1} pieces={dnd_content.pieces1} on:checkround={checkRoundStatus} round={1} />
-
-<GameBoard colHeadings={dnd_content.dndgame2} pieces={dnd_content.pieces2} on:checkround={checkRoundStatus} round={2} />
+{#if updatedRound === 1}
+	<GameBoard colHeadings={dnd_content.dndgame1} pieces={dnd_content.pieces1} on:checkround={updateRound} round={1} />
+{:else}
+	<GameBoard colHeadings={dnd_content.dndgame2} pieces={dnd_content.pieces2} on:checkround={updateRound} round={2} />
+{/if}

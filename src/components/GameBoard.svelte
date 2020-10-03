@@ -2,7 +2,7 @@
 	import { onMount, createEventDispatcher } from "svelte";
 
 	import Content from "../routes/content.svelte";
-	import { scoreCorrectCount, scoreWrongCount } from "../stores/dnd_game_store";
+	import { totalCorrect, totalWrong, round1Correct, round1Wrong, round2Correct, round2Wrong } from "../stores/dnd_game_store";
 
 	// export let dnd_content;
 	export let colHeadings;
@@ -11,12 +11,24 @@
 
 	const dispatch = createEventDispatcher();
 
+	$: if (piecesLeft <= 15) {
+		// if current round is 1, then change to 2, else change to 3
+		round = round === 1 ? 2 : 3;
+		dispatch("checkround", round);
+	}
+
+	$: if (piecesLeft) {
+		totalCorrect.update(() => $round1Correct + $round2Correct);
+		totalWrong.update(() => $round1Wrong + $round2Wrong);
+	}
+
 	let piecesArray = [];
-	let piecesLeft = 15;
+	let piecesLeft = 30;
 
 	onMount(() => {
 		piecesArray = [...pieces];
 		piecesArray = shuffleArray(piecesArray);
+		console.log("current round on mount: ", round);
 	});
 
 	const shuffleArray = (array) => {
@@ -69,11 +81,27 @@
 				}
 
 				if (!checkIsMatch(e.target, dragItem)) {
-					scoreWrongCount.update((score) => score + 1);
+					switch (round) {
+						case 1:
+							round1Wrong.update((score) => score + 1);
+							break;
+						case 2:
+							round2Wrong.update((score) => score + 1);
+							break;
+					}
+					// scoreWrongCount.update((score) => score + 1);
 					e.target.style.backgroundColor = "#bf1d1d"; // bg = red
 					dragItem.style.color = "#e8e1e1"; // font color = light gray
 				} else if (checkIsMatch(e.target, dragItem)) {
-					scoreCorrectCount.update((score) => score + 1);
+					switch (round) {
+						case 1:
+							round1Correct.update((score) => score + 1);
+							break;
+						case 2:
+							round2Correct.update((score) => score + 1);
+							break;
+					}
+					// scoreCorrectCount.update((score) => score + 1);
 					if (dragItem.childNodes[0].tagName === "IMG") {
 						dragItem.childNodes[0].setAttribute("draggable", false);
 						dragItem.childNodes[0].style.cursor = "no-drop";
@@ -130,7 +158,6 @@
 
 	const checkPiecesLeft = (el) => {
 		const numChildNodes = el.childNodes.length;
-		console.log("number of children left: ", numChildNodes);
 		return numChildNodes;
 	};
 </script>
@@ -319,7 +346,6 @@
 	</div>
 
 	<div class="pieces-container" id={round === 1 ? 'piecesCont1' : 'piecesCont2'} on:drop={dropItem} on:dragover={allowDrop}>
-		<!-- {#each dnd_content.pieces as piece} -->
 		{#each piecesArray as piece, i}
 			{#if piece.definition || piece.hint}
 				<div id={piece.id} class={`pieces ${piece.col} text`} draggable="true" on:dragstart={dragItem}>
@@ -333,7 +359,9 @@
 		{/each}
 	</div>
 	<div class="score-container">
-		<div class="correct-score"># correct: {$scoreCorrectCount}</div>
-		<div class="wrong-score"># wrong: {$scoreWrongCount}</div>
+		<div class="correct-score"># total correct: {$totalCorrect}</div>
+		<div class="wrong-score"># total wrong: {$totalWrong}</div>
+		<div class="wrong-score"># round {round} wrong: {round === 1 ? $round1Wrong : $round2Wrong}</div>
+		<div class="wrong-score"># round {round} correct: {round === 1 ? $round1Correct : $round2Correct}</div>
 	</div>
 </div>
