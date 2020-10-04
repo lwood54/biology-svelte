@@ -2,8 +2,7 @@
 	import { onMount, createEventDispatcher } from "svelte";
 	import { fade } from "svelte/transition";
 
-	import Content from "../routes/content.svelte";
-	import { totalCorrect, totalWrong, round1Correct, round1Wrong, round2Correct, round2Wrong } from "../stores/dnd_game_store";
+	import { totalCorrect, totalWrong, round1Correct, round1Wrong, round2Correct, round2Wrong, firstLoad } from "../stores/dnd_game_store";
 
 	// export let dnd_content;
 	export let colHeadings;
@@ -25,13 +24,19 @@
 		totalWrong.update(() => $round1Wrong + $round2Wrong);
 	}
 
+	$: {
+		if (!$firstLoad && round === 1) {
+			resetScore();
+		}
+	}
+
 	let piecesArray = [];
 	let piecesLeft = 30;
 
 	onMount(() => {
 		piecesArray = [...pieces];
 		piecesArray = shuffleArray(piecesArray);
-		console.log("current round on mount: ", round);
+		firstLoad.update(() => false);
 	});
 
 	const shuffleArray = (array) => {
@@ -112,6 +117,7 @@
 					if (dragItem.childNodes[0].tagName === "IMG") {
 						dragItem.childNodes[0].setAttribute("draggable", false);
 						dragItem.childNodes[0].style.cursor = "no-drop";
+						dragItem.style.maxHeight = "110px";
 					} else {
 						dragItem.style.overflow = "auto";
 					}
@@ -166,6 +172,15 @@
 	const checkPiecesLeft = (el) => {
 		const numChildNodes = el.childNodes.length;
 		return numChildNodes;
+	};
+
+	const resetScore = () => {
+		totalCorrect.update(() => 0);
+		totalWrong.update(() => 0);
+		round1Correct.update(() => 0);
+		round1Wrong.update(() => 0);
+		round2Correct.update(() => 0);
+		round2Wrong.update(() => 0);
 	};
 </script>
 
@@ -236,14 +251,22 @@
 
 	.img-container {
 		max-height: 130px;
-		/* width: 100%; */
 		padding: 1px;
+		display: flex;
+		justify-content: center;
 		box-shadow: 1px 2px 3px black;
+		align-items: center;
 	}
 
 	.img-piece {
-		max-height: 120px;
-		width: 100%;
+		/* max-height: 120px; */
+		max-height: 90%;
+		/* height: auto; */
+		/* max-width: 100%; */
+		min-width: 75px;
+		max-width: 100%;
+		overflow: hidden;
+		margin: 0 5px;
 		/* width: 90%; */
 	}
 

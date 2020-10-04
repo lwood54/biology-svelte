@@ -1,8 +1,12 @@
 <script>
 	export let totalCorrect;
 	export let totalWrong;
+	let finalScore;
 
-	$: finalScore = Math.round((totalCorrect - totalWrong) / 100);
+	$: {
+		let calcScore = Math.round(((30 - totalWrong) / 30) * 100);
+		finalScore = calcScore >= 0 ? calcScore : 0;
+	}
 </script>
 
 <style>
