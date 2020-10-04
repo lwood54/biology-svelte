@@ -191,7 +191,8 @@
 
 	.pieces-container {
 		height: 145px;
-		width: 25%;
+		/* width: 25%; */
+		width: 300px;
 		display: flex;
 		justify-content: flex-end;
 		align-items: flex-start;
@@ -207,9 +208,10 @@
 		max-width: 90%;
 		position: absolute;
 		overflow: hidden;
-		padding-top: 10px;
-		background-color: rgb(115, 167, 167);
-		color: rgb(15, 21, 21);
+		/* padding-top: 10px; */
+		padding: 5% 5% 0 5%;
+		background-color: #d8d8d8;
+		color: #314541;
 		line-height: 1.15rem;
 		border-radius: 2px;
 		cursor: grab;
@@ -234,17 +236,33 @@
 
 	.img-container {
 		max-height: 130px;
+		/* width: 100%; */
 		padding: 1px;
 		box-shadow: 1px 2px 3px black;
 	}
 
 	.img-piece {
 		max-height: 120px;
+		width: 100%;
+		/* width: 90%; */
 	}
 
 	.score-container {
-		/* width: 100%; */
-		/* margin-left: 50%; */
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+	}
+
+	.score-item {
+		margin-bottom: 0.6rem;
+	}
+
+	.round-label {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 114px;
+		font-size: 3rem;
 	}
 
 	.target-container {
@@ -363,11 +381,14 @@
 
 	<div class="game-bar">
 		<div class="score-container">
-			<div class="correct-score">total correct: {$totalCorrect}</div>
-			<div class="wrong-score">total wrong: {$totalWrong}</div>
-			<div class="wrong-score">round {round} wrong: {round === 1 ? $round1Wrong : $round2Wrong}</div>
-			<div class="wrong-score">round {round} correct: {round === 1 ? $round1Correct : $round2Correct}</div>
+			<div class="score-item">total correct: {$totalCorrect}</div>
+			<div class="score-item">total wrong: {$totalWrong}</div>
+			<div class="score-item">round {round} correct: {round === 1 ? $round1Correct : $round2Correct}</div>
+			<div class="score-item">round {round} wrong: {round === 1 ? $round1Wrong : $round2Wrong}</div>
 		</div>
+
+		<div class="round-label" out:fade>Round {round}</div>
+
 		<div class="pieces-container" id={round === 1 ? 'piecesCont1' : 'piecesCont2'} on:drop={dropItem} on:dragover={allowDrop}>
 			{#each piecesArray as piece, i}
 				{#if piece.definition || piece.hint}
