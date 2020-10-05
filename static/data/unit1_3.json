@@ -1,9 +1,188 @@
 {
+	"unit": "1.3",
 	"title": "Unit 1.3 - Cell Processes and Energy Conversion",
 	"par1": {
 		"content": "Things and stuff and words for paragraph 1 for Unit 1.3"
 	},
 	"par2": {
 		"content": "even more learning words for some stuff that can be learned for Unit 1.3"
-	}
+	},
+	"dndgame1": {
+		"col1Heading": "Word1Unit3Unit3",
+		"col2Heading": "Word2Unit3Unit3",
+		"col3Heading": "Word3Unit3Unit3",
+		"col4Heading": "Word4Unit3Unit3",
+		"col5Heading": "Word5Unit3Unit3"
+	},
+	"pieces1": [
+		{
+			"id": "p1",
+			"col": "col1",
+			"definition": "Non-living structures that contain genetic material, which need a host to reproduce."
+		},
+		{
+			"id": "p2",
+			"col": "col1",
+			"hint": "Examples include: Covid-19, HIV, Ebola"
+		},
+		{
+			"id": "p3",
+			"col": "col1",
+			"pic": "unit1_1/virus.jpg",
+			"alt": "virus"
+		},
+		{
+			"id": "p4",
+			"col": "col2",
+			"definition": "A single-celled organism that has no nucleus to contain its genetic material and no organelles."
+		},
+		{
+			"id": "p5",
+			"col": "col2",
+			"hint": "Examples include: bacteria, and cyanobacteria"
+		},
+		{
+			"id": "p6",
+			"col": "col2",
+			"pic": "unit1_1/prokaryote.png",
+			"alt": "prokaryote"
+		},
+		{
+			"id": "p7",
+			"col": "col3",
+			"definition": "Single or multi-cellular organisms whose cells have a nucleus containing genetic material as well as other organelles."
+		},
+		{
+			"id": "p8",
+			"col": "col3",
+			"hint": "Examples include: plants, animals, fungi, and protists."
+		},
+		{
+			"id": "p9",
+			"col": "col3",
+			"pic": "unit1_1/eukaryote.gif",
+			"alt": "eukaryote"
+		},
+		{
+			"id": "p10",
+			"col": "col4",
+			"definition": "Organelle within eukaryotes that contains genetic material for the cell."
+		},
+		{
+			"id": "p11",
+			"col": "col4",
+			"hint": "This is the 'brain' of the cell because it stores the 'blueprints' or instructions."
+		},
+		{
+			"id": "p12",
+			"col": "col4",
+			"pic": "unit1_1/nucleus.png",
+			"alt": "nucleus"
+		},
+		{
+			"id": "p13",
+			"col": "col5",
+			"definition": "The protein coating of a virus that encloses the genetic material."
+		},
+		{
+			"id": "p14",
+			"col": "col5",
+			"hint": "This is not a cell membrane and is found on viruses."
+		},
+		{
+			"id": "p15",
+			"col": "col5",
+			"pic": "unit1_1/capsid.png",
+			"alt": "capsid"
+		}
+	],
+	"dndgame2": {
+		"col1Heading": "Word6Unit3",
+		"col2Heading": "Word7Unit3",
+		"col3Heading": "Word8Unit3",
+		"col4Heading": "Word9Unit3",
+		"col5Heading": "Word10Unit3"
+	},
+	"pieces2": [
+		{
+			"id": "p16",
+			"col": "col1",
+			"definition": "Eukaryotic cells, which do NOT contain cell walls or chloroplasts, but do contain centrioles."
+		},
+		{
+			"id": "p17",
+			"col": "col1",
+			"hint": "Type of eukaryotic cells that make up humans!"
+		},
+		{
+			"id": "p18",
+			"col": "col1",
+			"pic": "unit1_1/animal_cell.gif",
+			"alt": "animal cell"
+		},
+		{
+			"id": "p19",
+			"col": "col2",
+			"definition": "Eukaryotic cells surrounded by cell walls, which DO contain chloroplasts, and a large central vacuole."
+		},
+		{
+			"id": "p20",
+			"col": "col2",
+			"hint": "These type of eukaryotic cells make up the grass in your lawn."
+		},
+		{
+			"id": "p21",
+			"col": "col2",
+			"pic": "unit1_1/plant_cell.jpg",
+			"alt": "plant cell"
+		},
+		{
+			"id": "p22",
+			"col": "col3",
+			"definition": "Made up of at least one cell, interact with the environment, can grow and reproduce."
+		},
+		{
+			"id": "p23",
+			"col": "col3",
+			"hint": "This category includes us, plants, and animals. aka biotic things."
+		},
+		{
+			"id": "p24",
+			"col": "col3",
+			"pic": "unit1_1/biotic_factors.jpg",
+			"alt": "living things"
+		},
+		{
+			"id": "p25",
+			"col": "col4",
+			"definition": "Objects that do not meet the requirements of life such as being made up of one or more cells, growing and reproducing."
+		},
+		{
+			"id": "p26",
+			"col": "col4",
+			"hint": "The include things like viruses, rocks, water, sunlight. aka Abiotic factors."
+		},
+		{
+			"id": "p27",
+			"col": "col4",
+			"pic": "unit1_1/viruses_non-living.jpg",
+			"alt": "viruses non-living"
+		},
+		{
+			"id": "p28",
+			"col": "col5",
+			"definition": "Membrane-bound structures found inside eukaryotic cells. They allow eukaryotes to become complex living organisms."
+		},
+		{
+			"id": "p29",
+			"col": "col5",
+			"hint": "Examples include: nucleus, mitochondria, chloroplast, golgi complex, rough and smooth ER"
+		},
+		{
+			"id": "p30",
+			"col": "col5",
+			"pic": "unit1_1/organelles.jpg",
+			"alt": "organelles"
+		}
+	]
 }

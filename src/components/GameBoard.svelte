@@ -2,13 +2,18 @@
 	import { onMount, createEventDispatcher } from "svelte";
 	import { fade } from "svelte/transition";
 
-	import { totalCorrect, totalWrong, round1Correct, round1Wrong, round2Correct, round2Wrong, firstLoad } from "../stores/dnd_game_store";
-
-	// export let dnd_content;
 	export let colHeadings;
 	export let pieces;
 	export let round;
 	export let title;
+
+	export let totalCorrect;
+	export let totalWrong;
+	export let round1Correct;
+	export let round1Wrong;
+	export let round2Correct;
+	export let round2Wrong;
+	export let firstLoad;
 
 	const dispatch = createEventDispatcher();
 
