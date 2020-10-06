@@ -5,65 +5,31 @@
 	export let pieces;
 	export let round;
 	export let title;
-	export let totalCorrect;
-	export let totalWrong;
-	export let round1Correct;
-	export let round1Wrong;
-	export let round2Correct;
-	export let round2Wrong;
-	export let firstLoad;
 	export let dnd_store;
 
-	$: {
-		console.log("dnd_store: ", $dnd_store.totalCorrect);
-		console.log("dnd_store: ", $dnd_store.totalWrong);
-	}
-
-	const incTotCor = () => {
-		dnd_store.update((data) => {
-			const updateTotal = {
-				...data,
-				totalCorrect: data.totalCorrect + 1,
-			};
-			return updateTotal;
-		});
-	};
-
-	const incTotWrong = () => {
-		dnd_store.update((data) => {
-			const updateTotal = {
-				...data,
-				totalWrong: data.totalWrong + 1,
-			};
-			return updateTotal;
-		});
-	};
+	let piecesArray = [];
+	let piecesLeft = 30;
 
 	const dispatch = createEventDispatcher();
 	$: if (piecesLeft <= 15) {
 		// if current round is 1, then change to 2, else change to 3
 		round = round === 1 ? 2 : 3;
-		console.log("current round: ", round);
 		dispatch("checkround", round);
 	}
-	$: if (piecesLeft) {
-		// dnd_store.totalCorrect.update(() => $dnd_store.round1Correct + $dnd_store.round2Correct);
-		// dnd_store.totalWrong.update(() => $dnd_store.round1Wrong + $dnd_store.round2Wrong);
-		totalCorrect.update(() => $round1Correct + $round2Correct);
-		totalWrong.update(() => $round1Wrong + $round2Wrong);
-	}
+
 	$: {
-		if (!$firstLoad && round === 1) {
-			resetScore();
+		if (!$dnd_store.firstLoad && round === 1) {
+			dnd_store.resetScores();
 		}
 	}
-	let piecesArray = [];
-	let piecesLeft = 30;
+
 	onMount(() => {
 		piecesArray = [...pieces];
 		piecesArray = shuffleArray(piecesArray);
-		firstLoad.update(() => false);
+		// firstLoad.update(() => false);
+		dnd_store.changeFirstLoad(false);
 	});
+
 	const shuffleArray = (array) => {
 		// copy array to manipulate
 		let arrayCopy = [...array];
@@ -76,6 +42,7 @@
 		}
 		return mixedArray;
 	};
+
 	const dragItem = (e) => {
 		if (e.target.tagName === "IMG") {
 			e.dataTransfer.setData("text", e.target.parentNode.id);
@@ -83,6 +50,7 @@
 			e.dataTransfer.setData("text", e.target.id);
 		}
 	};
+
 	const dropItem = (e) => {
 		// define pieces container to allow drop of item back into original spot
 		let isPiecesContainer = hasClass(e.target, "pieces-container");
@@ -117,25 +85,23 @@
 				if (!checkIsMatch(e.target, dragItem)) {
 					switch (round) {
 						case 1:
-							round1Wrong.update((score) => score + 1);
+							dnd_store.incR1Wrong();
 							break;
 						case 2:
-							round2Wrong.update((score) => score + 1);
+							dnd_store.incR2Wrong();
 							break;
 					}
-					// scoreWrongCount.update((score) => score + 1);
 					e.target.style.backgroundColor = "#bf1d1d"; // bg = red
 					dragItem.style.color = "#e8e1e1"; // font color = light gray
 				} else if (checkIsMatch(e.target, dragItem)) {
 					switch (round) {
 						case 1:
-							round1Correct.update((score) => score + 1);
+							dnd_store.incR1Correct();
 							break;
 						case 2:
-							round2Correct.update((score) => score + 1);
+							dnd_store.incR2Correct();
 							break;
 					}
-					// scoreCorrectCount.update((score) => score + 1);
 					if (dragItem.childNodes[0].tagName === "IMG") {
 						dragItem.childNodes[0].setAttribute("draggable", false);
 						dragItem.childNodes[0].style.cursor = "no-drop";
@@ -189,14 +155,6 @@
 	const checkPiecesLeft = (el) => {
 		const numChildNodes = el.childNodes.length;
 		return numChildNodes;
-	};
-	const resetScore = () => {
-		totalCorrect.update(() => 0);
-		totalWrong.update(() => 0);
-		round1Correct.update(() => 0);
-		round1Wrong.update(() => 0);
-		round2Correct.update(() => 0);
-		round2Wrong.update(() => 0);
 	};
 </script>
 
@@ -401,10 +359,10 @@
 
 	<div class="game-bar">
 		<div class="score-container">
-			<div class="score-item">total correct: {$totalCorrect}</div>
-			<div class="score-item">total wrong: {$totalWrong}</div>
-			<div class="score-item">round {round} correct: {round === 1 ? $round1Correct : $round2Correct}</div>
-			<div class="score-item">round {round} wrong: {round === 1 ? $round1Wrong : $round2Wrong}</div>
+			<div class="score-item">total correct: {$dnd_store.totalCorrect}</div>
+			<div class="score-item">total wrong: {$dnd_store.totalWrong}</div>
+			<div class="score-item">round {round} correct: {round === 1 ? $dnd_store.round1Correct : $dnd_store.round2Correct}</div>
+			<div class="score-item">round {round} wrong: {round === 1 ? $dnd_store.round1Wrong : $dnd_store.round2Wrong}</div>
 		</div>
 
 		<div class="round-label" out:fade={{ duration: 10 }}>Round {round}</div>
@@ -423,6 +381,4 @@
 			{/each}
 		</div>
 	</div>
-	<button on:click={incTotCor}>increase totalCorrect</button>
-	<button on:click={incTotWrong}>increase totalWrong</button>
 </div>
