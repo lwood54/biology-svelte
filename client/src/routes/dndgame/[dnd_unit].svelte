@@ -3,7 +3,6 @@
 		const { dnd_unit } = page.params;
 		const res = await this.fetch(`data/${dnd_unit}.json`);
 		const dnd_content = await res.json();
-
 		return { dnd_content };
 	}
 </script>

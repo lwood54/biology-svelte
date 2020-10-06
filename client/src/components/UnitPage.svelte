@@ -3,14 +3,12 @@
 		const { unit } = page.params;
 		const res = await this.fetch(`data/${unit}.json`);
 		const unit_content = await res.json();
-
 		return { unit_content };
 	}
 </script>
 
 <script>
 	export let unit_content;
-
 	// sorts alphabetically so I can render paragraphs in order and only render
 	// the number of paragraphs needed for the available content
 	let unitItems = Object.entries(unit_content).sort((a, b) => a[0].localeCompare(b[0]));
@@ -29,7 +27,6 @@
 	.parImg {
 		width: 75%;
 	}
-
 	.content {
 		display: flex;
 	}

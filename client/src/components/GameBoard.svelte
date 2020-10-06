@@ -1,12 +1,10 @@
 <script>
 	import { onMount, createEventDispatcher } from "svelte";
 	import { fade } from "svelte/transition";
-
 	export let colHeadings;
 	export let pieces;
 	export let round;
 	export let title;
-
 	export let totalCorrect;
 	export let totalWrong;
 	export let round1Correct;
@@ -14,36 +12,29 @@
 	export let round2Correct;
 	export let round2Wrong;
 	export let firstLoad;
-
 	const dispatch = createEventDispatcher();
-
 	$: if (piecesLeft <= 15) {
 		// if current round is 1, then change to 2, else change to 3
 		round = round === 1 ? 2 : 3;
 		console.log("current round: ", round);
 		dispatch("checkround", round);
 	}
-
 	$: if (piecesLeft) {
 		totalCorrect.update(() => $round1Correct + $round2Correct);
 		totalWrong.update(() => $round1Wrong + $round2Wrong);
 	}
-
 	$: {
 		if (!$firstLoad && round === 1) {
 			resetScore();
 		}
 	}
-
 	let piecesArray = [];
 	let piecesLeft = 30;
-
 	onMount(() => {
 		piecesArray = [...pieces];
 		piecesArray = shuffleArray(piecesArray);
 		firstLoad.update(() => false);
 	});
-
 	const shuffleArray = (array) => {
 		// copy array to manipulate
 		let arrayCopy = [...array];
@@ -56,7 +47,6 @@
 		}
 		return mixedArray;
 	};
-
 	const dragItem = (e) => {
 		if (e.target.tagName === "IMG") {
 			e.dataTransfer.setData("text", e.target.parentNode.id);
@@ -64,7 +54,6 @@
 			e.dataTransfer.setData("text", e.target.id);
 		}
 	};
-
 	const dropItem = (e) => {
 		// define pieces container to allow drop of item back into original spot
 		let isPiecesContainer = hasClass(e.target, "pieces-container");
@@ -96,7 +85,6 @@
 					e.target.style.backgroundColor = "#77bc43"; // green
 					dragItem.style.color = "#0d223f";
 				}
-
 				if (!checkIsMatch(e.target, dragItem)) {
 					switch (round) {
 						case 1:
@@ -145,15 +133,12 @@
 			piecesLeft = checkPiecesLeft(piecesCont);
 		}
 	};
-
 	const allowDrop = (e) => {
 		e.preventDefault();
 	};
-
 	const handleDrag = (e) => {
 		e.target.style.cursor = "grabbing";
 	};
-
 	const checkIsMatch = (target, dragItem) => {
 		if (hasClass(target, "col1") && hasClass(dragItem, "col1")) {
 			return true;
@@ -169,16 +154,13 @@
 			return false;
 		}
 	};
-
 	const hasClass = (el, clss) => {
 		return el.classList.contains(clss);
 	};
-
 	const checkPiecesLeft = (el) => {
 		const numChildNodes = el.childNodes.length;
 		return numChildNodes;
 	};
-
 	const resetScore = () => {
 		totalCorrect.update(() => 0);
 		totalWrong.update(() => 0);
@@ -202,13 +184,11 @@
 		margin: auto;
 		box-sizing: border-box;
 	}
-
 	.game-bar {
 		display: flex;
 		justify-content: space-between;
 		margin: 0.75rem;
 	}
-
 	.pieces-container {
 		height: 145px;
 		/* width: 25%; */
@@ -218,7 +198,6 @@
 		align-items: flex-start;
 		position: relative;
 	}
-
 	.pieces {
 		display: flex;
 		justify-content: center;
@@ -238,22 +217,18 @@
 		box-shadow: 1px 2px 3px black;
 		visibility: hidden;
 	}
-
 	/* only show first div in container helps prevent
   stacking up of box-shadow
   NOTE: make sure to have any dropped divs in targets visible */
 	.pieces-container div:first-of-type {
 		visibility: visible;
 	}
-
 	.pieces::-webkit-scrollbar {
 		display: none;
 	}
-
 	.pieces.text {
 		overflow: auto;
 	}
-
 	.img-container {
 		max-height: 130px;
 		padding: 1px;
@@ -262,7 +237,6 @@
 		box-shadow: 1px 2px 3px black;
 		align-items: center;
 	}
-
 	.img-piece {
 		/* max-height: 120px; */
 		max-height: 90%;
@@ -274,17 +248,14 @@
 		margin: 0 5px;
 		/* width: 90%; */
 	}
-
 	.score-container {
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
 	}
-
 	.score-item {
 		margin-bottom: 0.6rem;
 	}
-
 	.round-label {
 		display: flex;
 		justify-content: center;
@@ -292,7 +263,6 @@
 		height: 114px;
 		font-size: 3rem;
 	}
-
 	.target-container {
 		height: 70%;
 		width: 100%;
@@ -303,7 +273,6 @@
 		box-sizing: border-box;
 		margin: 0;
 	}
-
 	.target {
 		display: flex;
 		justify-content: center;
@@ -315,7 +284,6 @@
 		border-radius: 2px;
 		box-sizing: border-box;
 	}
-
 	.column {
 		width: 19%;
 		max-height: 100%;
@@ -328,7 +296,6 @@
 		margin: 0;
 		box-sizing: border-box;
 	}
-
 	.c1 .target,
 	.c3 .target,
 	.c5 .target {
@@ -340,7 +307,6 @@
 		background-color: #77bc43;
 		color: #0d223f;
 	}
-
 	.colHeading {
 		display: flex;
 		justify-content: center;
@@ -349,19 +315,16 @@
 		height: 35px;
 		font-size: 1rem;
 	}
-
 	.c1 .colHeading,
 	.c3 .colHeading,
 	.c5 .colHeading {
 		background-color: #77bc43;
 	}
-
 	.c2 .colHeading,
 	.c4 .colHeading {
 		background-color: #0d223f;
 		color: #77bc43;
 	}
-
 	@media screen and (max-width: 1120px) {
 		.pieces-container {
 			margin-left: 8px;
