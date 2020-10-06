@@ -19,6 +19,7 @@
 
 	$: {
 		if (!$dnd_store.firstLoad && round === 1) {
+			// reset only if game has been loaded and user is back to round 1
 			dnd_store.resetScores();
 		}
 	}
@@ -26,7 +27,9 @@
 	onMount(() => {
 		piecesArray = [...pieces];
 		piecesArray = shuffleArray(piecesArray);
-		// firstLoad.update(() => false);
+		// firstLoad starts as true, and is immediately turned false
+		// this will affect score reset onMount so that round 2 is not reset
+		// but reset will happen when coming back after game is over
 		dnd_store.changeFirstLoad(false);
 	});
 
@@ -83,25 +86,11 @@
 					dragItem.style.color = "#0d223f";
 				}
 				if (!checkIsMatch(e.target, dragItem)) {
-					switch (round) {
-						case 1:
-							dnd_store.incR1Wrong();
-							break;
-						case 2:
-							dnd_store.incR2Wrong();
-							break;
-					}
+					dnd_store.incWrongCount(round);
 					e.target.style.backgroundColor = "#bf1d1d"; // bg = red
 					dragItem.style.color = "#e8e1e1"; // font color = light gray
 				} else if (checkIsMatch(e.target, dragItem)) {
-					switch (round) {
-						case 1:
-							dnd_store.incR1Correct();
-							break;
-						case 2:
-							dnd_store.incR2Correct();
-							break;
-					}
+					dnd_store.incCorrectCount(round);
 					if (dragItem.childNodes[0].tagName === "IMG") {
 						dragItem.childNodes[0].setAttribute("draggable", false);
 						dragItem.childNodes[0].style.cursor = "no-drop";
@@ -128,12 +117,15 @@
 			piecesLeft = checkPiecesLeft(piecesCont);
 		}
 	};
+
 	const allowDrop = (e) => {
 		e.preventDefault();
 	};
+
 	const handleDrag = (e) => {
 		e.target.style.cursor = "grabbing";
 	};
+
 	const checkIsMatch = (target, dragItem) => {
 		if (hasClass(target, "col1") && hasClass(dragItem, "col1")) {
 			return true;
@@ -149,9 +141,11 @@
 			return false;
 		}
 	};
+
 	const hasClass = (el, clss) => {
 		return el.classList.contains(clss);
 	};
+
 	const checkPiecesLeft = (el) => {
 		const numChildNodes = el.childNodes.length;
 		return numChildNodes;

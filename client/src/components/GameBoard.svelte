@@ -12,32 +12,9 @@
 	export let round2Correct;
 	export let round2Wrong;
 	export let firstLoad;
-	export let dnd_store;
 
-	$: {
-		console.log("dnd_store: ", $dnd_store.totalCorrect);
-		console.log("dnd_store: ", $dnd_store.totalWrong);
-	}
-
-	const incTotCor = () => {
-		dnd_store.update((data) => {
-			const updateTotal = {
-				...data,
-				totalCorrect: data.totalCorrect + 1,
-			};
-			return updateTotal;
-		});
-	};
-
-	const incTotWrong = () => {
-		dnd_store.update((data) => {
-			const updateTotal = {
-				...data,
-				totalWrong: data.totalWrong + 1,
-			};
-			return updateTotal;
-		});
-	};
+	let piecesArray = [];
+	let piecesLeft = 30;
 
 	const dispatch = createEventDispatcher();
 	$: if (piecesLeft <= 15) {
@@ -46,24 +23,28 @@
 		console.log("current round: ", round);
 		dispatch("checkround", round);
 	}
+
 	$: if (piecesLeft) {
-		// dnd_store.totalCorrect.update(() => $dnd_store.round1Correct + $dnd_store.round2Correct);
-		// dnd_store.totalWrong.update(() => $dnd_store.round1Wrong + $dnd_store.round2Wrong);
 		totalCorrect.update(() => $round1Correct + $round2Correct);
 		totalWrong.update(() => $round1Wrong + $round2Wrong);
 	}
+
 	$: {
 		if (!$firstLoad && round === 1) {
+			// reset only if game has been loaded and user is back to round 1
 			resetScore();
 		}
 	}
-	let piecesArray = [];
-	let piecesLeft = 30;
+
 	onMount(() => {
 		piecesArray = [...pieces];
 		piecesArray = shuffleArray(piecesArray);
+		// firstLoad starts as true, and is immediately turned false
+		// this will affect score reset onMount so that round 2 is not reset
+		// but reset will happen when coming back after game is over
 		firstLoad.update(() => false);
 	});
+
 	const shuffleArray = (array) => {
 		// copy array to manipulate
 		let arrayCopy = [...array];
@@ -76,6 +57,7 @@
 		}
 		return mixedArray;
 	};
+
 	const dragItem = (e) => {
 		if (e.target.tagName === "IMG") {
 			e.dataTransfer.setData("text", e.target.parentNode.id);
@@ -83,6 +65,7 @@
 			e.dataTransfer.setData("text", e.target.id);
 		}
 	};
+
 	const dropItem = (e) => {
 		// define pieces container to allow drop of item back into original spot
 		let isPiecesContainer = hasClass(e.target, "pieces-container");
@@ -162,12 +145,15 @@
 			piecesLeft = checkPiecesLeft(piecesCont);
 		}
 	};
+
 	const allowDrop = (e) => {
 		e.preventDefault();
 	};
+
 	const handleDrag = (e) => {
 		e.target.style.cursor = "grabbing";
 	};
+
 	const checkIsMatch = (target, dragItem) => {
 		if (hasClass(target, "col1") && hasClass(dragItem, "col1")) {
 			return true;
@@ -183,13 +169,16 @@
 			return false;
 		}
 	};
+
 	const hasClass = (el, clss) => {
 		return el.classList.contains(clss);
 	};
+
 	const checkPiecesLeft = (el) => {
 		const numChildNodes = el.childNodes.length;
 		return numChildNodes;
 	};
+
 	const resetScore = () => {
 		totalCorrect.update(() => 0);
 		totalWrong.update(() => 0);
@@ -423,6 +412,4 @@
 			{/each}
 		</div>
 	</div>
-	<button on:click={incTotCor}>increase totalCorrect</button>
-	<button on:click={incTotWrong}>increase totalWrong</button>
 </div>
