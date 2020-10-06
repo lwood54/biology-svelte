@@ -3,7 +3,9 @@
 	import GameBoard from "./GameBoard.svelte";
 	import { fade, fly } from "svelte/transition";
 	import GameOver from "./GameOver.svelte";
+
 	export let dnd_content;
+
 	$: updatedRound = 1;
 	const updateRound = (e) => {
 		updatedRound = e.detail;
