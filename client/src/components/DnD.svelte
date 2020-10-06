@@ -7,6 +7,10 @@
 	export let dnd_content;
 
 	$: updatedRound = 1;
+	$: colHeadings = updatedRound === 1 ? dnd_content.dndgame1 : dnd_content.dndgame2;
+	$: pieces = updatedRound === 1 ? dnd_content.pieces1 : dnd_content.pieces2;
+	$: round = updatedRound;
+
 	const updateRound = (e) => {
 		updatedRound = e.detail;
 	};
@@ -23,10 +27,10 @@
 			{round2Wrong}
 			{firstLoad}
 			title={dnd_content.title}
-			colHeadings={dnd_content.dndgame1}
-			pieces={dnd_content.pieces1}
+			{colHeadings}
+			{pieces}
 			on:checkround={updateRound}
-			round={1} />
+			{round} />
 	</div>
 {:else if updatedRound === 2}
 	<div in:fade={{ delay: 600, duration: 500 }} out:fly={{ x: 200, duration: 500 }}>
@@ -39,10 +43,10 @@
 			{round2Wrong}
 			{firstLoad}
 			title={dnd_content.title}
-			colHeadings={dnd_content.dndgame2}
-			pieces={dnd_content.pieces2}
+			{colHeadings}
+			{pieces}
 			on:checkround={updateRound}
-			round={2} />
+			{round} />
 	</div>
 {:else if updatedRound === 3}
 	<div in:fly={{ y: 200, delay: 600 }}>

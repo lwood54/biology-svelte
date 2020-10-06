@@ -378,7 +378,7 @@
 			<div class="score-item">round {round} wrong: {round === 1 ? $round1Wrong : $round2Wrong}</div>
 		</div>
 
-		<div class="round-label" out:fade>Round {round}</div>
+		<div class="round-label" out:fade={{ duration: 10 }}>Round {round}</div>
 
 		<div class="pieces-container" id={round === 1 ? 'piecesCont1' : 'piecesCont2'} on:drop={dropItem} on:dragover={allowDrop}>
 			{#each piecesArray as piece, i}
