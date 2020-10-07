@@ -340,7 +340,7 @@
 	</div>
 
 	<div class="game-bar">
-		<div class="score-container">
+		<div out:fade={{ duration: 10 }} class="score-container">
 			<div class="score-item">total correct: {$dnd_store.totalCorrect}</div>
 			<div class="score-item">total wrong: {$dnd_store.totalWrong}</div>
 			<div class="score-item">round {round} correct: {round === 1 ? $dnd_store.round1Correct : $dnd_store.round2Correct}</div>

@@ -4,7 +4,7 @@
 	"par1": {
 		"content": "Notes, notes, and more notes in paragraph 1",
 		"pic": {
-			"src": "unit1_1/virus.jpg",
+			"src": "images/unit1_1/virus.jpg",
 			"alt": "virus"
 		}
 	},
@@ -35,7 +35,7 @@
 		{
 			"id": "p3",
 			"col": "col1",
-			"pic": "unit1_1/virus.jpg",
+			"pic": "images/unit1_1/virus.jpg",
 			"alt": "virus"
 		},
 		{
@@ -51,7 +51,7 @@
 		{
 			"id": "p6",
 			"col": "col2",
-			"pic": "unit1_1/prokaryote.png",
+			"pic": "images/unit1_1/prokaryote.png",
 			"alt": "prokaryote"
 		},
 		{
@@ -67,7 +67,7 @@
 		{
 			"id": "p9",
 			"col": "col3",
-			"pic": "unit1_1/eukaryote.gif",
+			"pic": "images/unit1_1/eukaryote.gif",
 			"alt": "eukaryote"
 		},
 		{
@@ -83,7 +83,7 @@
 		{
 			"id": "p12",
 			"col": "col4",
-			"pic": "unit1_1/nucleus.png",
+			"pic": "images/unit1_1/nucleus.png",
 			"alt": "nucleus"
 		},
 		{
@@ -99,7 +99,7 @@
 		{
 			"id": "p15",
 			"col": "col5",
-			"pic": "unit1_1/capsid.png",
+			"pic": "images/unit1_1/capsid.png",
 			"alt": "capsid"
 		}
 	],
@@ -124,7 +124,7 @@
 		{
 			"id": "p18",
 			"col": "col1",
-			"pic": "unit1_1/animal_cell.gif",
+			"pic": "images/unit1_1/animal_cell.gif",
 			"alt": "animal cell"
 		},
 		{
@@ -140,7 +140,7 @@
 		{
 			"id": "p21",
 			"col": "col2",
-			"pic": "unit1_1/plant_cell.jpg",
+			"pic": "images/unit1_1/plant_cell.jpg",
 			"alt": "plant cell"
 		},
 		{
@@ -156,7 +156,7 @@
 		{
 			"id": "p24",
 			"col": "col3",
-			"pic": "unit1_1/biotic_factors.jpg",
+			"pic": "images/unit1_1/biotic_factors.jpg",
 			"alt": "living things"
 		},
 		{
@@ -172,7 +172,7 @@
 		{
 			"id": "p27",
 			"col": "col4",
-			"pic": "unit1_1/viruses_non-living.jpg",
+			"pic": "images/unit1_1/viruses_non-living.jpg",
 			"alt": "viruses non-living"
 		},
 		{
@@ -188,7 +188,7 @@
 		{
 			"id": "p30",
 			"col": "col5",
-			"pic": "unit1_1/organelles.jpg",
+			"pic": "images/unit1_1/organelles.jpg",
 			"alt": "organelles"
 		}
 	]
