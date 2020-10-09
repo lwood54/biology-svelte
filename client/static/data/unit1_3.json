@@ -60,7 +60,7 @@
 		{
 			"id": "p9",
 			"col": "col3",
-			"pic": "images/unit1_1/reactants.png",
+			"pic": "images/unit1_3/reactants.png",
 			"alt": "reactants"
 		},
 		{
@@ -76,7 +76,7 @@
 		{
 			"id": "p12",
 			"col": "col4",
-			"pic": "images/unit1_1/products.png",
+			"pic": "images/unit1_3/products.png",
 			"alt": "products"
 		},
 		{
@@ -92,7 +92,7 @@
 		{
 			"id": "p15",
 			"col": "col5",
-			"pic": "images/unit1_1/ATP.png",
+			"pic": "images/unit1_3/ATP.png",
 			"alt": "ATP"
 		}
 	],
