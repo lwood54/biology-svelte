@@ -8,92 +8,92 @@
 		"content": "even more learning words for some stuff that can be learned for Unit 1.3"
 	},
 	"dndgame1": {
-		"col1Heading": "Word1Unit3",
-		"col2Heading": "Word2Unit3",
-		"col3Heading": "Word3Unit3",
-		"col4Heading": "Word4Unit3",
-		"col5Heading": "Word5Unit3"
+		"col1Heading": "Photosynthesis",
+		"col2Heading": "Cellular Respiration",
+		"col3Heading": "Reactants",
+		"col4Heading": "Products",
+		"col5Heading": "ATP"
 	},
 	"pieces1": [
 		{
 			"id": "p1",
 			"col": "col1",
-			"definition": "Non-living structures that contain genetic material, which need a host to reproduce."
+			"definition": "Process used by autotrophs which convert radiant energy into chemical energy."
 		},
 		{
 			"id": "p2",
 			"col": "col1",
-			"hint": "Examples include: Covid-19, HIV, Ebola"
+			"hint": "Plants do this and we get to breath oxygen and eat sugar!"
 		},
 		{
 			"id": "p3",
 			"col": "col1",
-			"pic": "images/unit1_1/virus.jpg",
-			"alt": "virus"
+			"pic": "images/unit1_3/photosynthesis.gif",
+			"alt": "photosynthesis"
 		},
 		{
 			"id": "p4",
 			"col": "col2",
-			"definition": "A single-celled organism that has no nucleus to contain its genetic material and no organelles."
+			"definition": "The process of breaking down glucose molecules and converting the energy into ATP molecules."
 		},
 		{
 			"id": "p5",
 			"col": "col2",
-			"hint": "Examples include: bacteria, and cyanobacteria"
+			"hint": "This process happens in the mitochondria, carried out by both plants and animals."
 		},
 		{
 			"id": "p6",
 			"col": "col2",
-			"pic": "images/unit1_1/prokaryote.png",
-			"alt": "prokaryote"
+			"pic": "images/unit1_3/cellular_respiration.png",
+			"alt": "cellular respiration"
 		},
 		{
 			"id": "p7",
 			"col": "col3",
-			"definition": "Single or multi-cellular organisms whose cells have a nucleus containing genetic material as well as other organelles."
+			"definition": "Elements or compounds that enter into a chemical reaction."
 		},
 		{
 			"id": "p8",
 			"col": "col3",
-			"hint": "Examples include: plants, animals, fungi, and protists."
+			"hint": "Examples include: carbon dioxide and water for photosynthesis"
 		},
 		{
 			"id": "p9",
 			"col": "col3",
-			"pic": "images/unit1_1/eukaryote.gif",
-			"alt": "eukaryote"
+			"pic": "images/unit1_1/reactants.png",
+			"alt": "reactants"
 		},
 		{
 			"id": "p10",
 			"col": "col4",
-			"definition": "Organelle within eukaryotes that contains genetic material for the cell."
+			"definition": "Elements or compounds produced or made by a chemical reaction."
 		},
 		{
 			"id": "p11",
 			"col": "col4",
-			"hint": "This is the 'brain' of the cell because it stores the 'blueprints' or instructions."
+			"hint": "Examples include: carbon dioxide and water for cellular respiration"
 		},
 		{
 			"id": "p12",
 			"col": "col4",
-			"pic": "images/unit1_1/nucleus.png",
-			"alt": "nucleus"
+			"pic": "images/unit1_1/products.png",
+			"alt": "products"
 		},
 		{
 			"id": "p13",
 			"col": "col5",
-			"definition": "The protein coating of a virus that encloses the genetic material."
+			"definition": "Energy molecule created during cellular respiration to provide energy to the cell."
 		},
 		{
 			"id": "p14",
 			"col": "col5",
-			"hint": "This is not a cell membrane and is found on viruses."
+			"hint": "This is the 'currency' of the cell. Adenosine triphosphate."
 		},
 		{
 			"id": "p15",
 			"col": "col5",
-			"pic": "images/unit1_1/capsid.png",
-			"alt": "capsid"
+			"pic": "images/unit1_1/ATP.png",
+			"alt": "ATP"
 		}
 	],
 	"dndgame2": {

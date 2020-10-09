@@ -3,11 +3,14 @@
 	import GameBoard from "./GameBoard.svelte";
 	import { fade, fly } from "svelte/transition";
 	import GameOver from "./GameOver.svelte";
+
 	export let dnd_content;
+
 	$: updatedRound = 1;
 	$: colHeadings = updatedRound === 1 ? dnd_content.dndgame1 : dnd_content.dndgame2;
 	$: pieces = updatedRound === 1 ? dnd_content.pieces1 : dnd_content.pieces2;
 	$: round = updatedRound;
+
 	const updateRound = (e) => {
 		updatedRound = e.detail;
 	};
