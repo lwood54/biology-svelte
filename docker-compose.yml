@@ -5,6 +5,7 @@ volumes:
 services:
   api:
     build: ./api
+    restart: always
     environment:
       db_connection_str: root:root@(localhost:33061)/biologysvelte?charset=utf8&parseTime=True&loc=Local
       GOOGLE_ID: id
@@ -16,6 +17,7 @@ services:
       - 8080:8080
   client:
     build: ./client
+    restart: always
     depends_on:
       - mysql
     ports:
