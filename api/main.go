@@ -7,5 +7,6 @@ import (
 
 func main() {
 	log.Println("Server starting...")
+	// dao.DbInit()
 	controllers.Init()
 }
