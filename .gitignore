@@ -5,3 +5,4 @@ yarn-error.log
 /__sapper__/
 .vscode
 api/__debug_bin
+docker-compose.dev.yml

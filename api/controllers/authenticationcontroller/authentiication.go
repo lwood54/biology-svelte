@@ -2,6 +2,7 @@ package authenticationcontroller
 
 import (
 	"biology-svelte/constants"
+	"biology-svelte/services/authentication"
 	"biology-svelte/structs/userstructs"
 	"crypto/rand"
 	"encoding/base64"
@@ -44,6 +45,7 @@ func loginHandler(c *gin.Context) {
 	c.Writer.Write([]byte("<a class='g-anchor-wrap' href='" + getLoginURL(state) + "'><button class='g-auth-btn'>Login with Google!</button> </a>"))
 }
 
+// todo try to move a lot of this into service
 func authHandler(c *gin.Context) {
 	// Handle the exchange code to initiate a transport.
 	session := sessions.Default(c)
@@ -77,7 +79,19 @@ func authHandler(c *gin.Context) {
 		log.Println(jsonError.Error())
 	}
 
-	c.JSON(http.StatusOK, googleUserDetails)
+	userResponse := authentication.HandleGoogleOAuthLogin(googleUserDetails)
+	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetCookie(constants.AuthCookie, userResponse.Jwt, 23982398, "", "", false, false)
+	c.JSON(http.StatusOK, userResponse)
+}
+
+func getUserDetails(c *gin.Context) {
+	jwtString, err := c.Cookie(constants.AuthCookie)
+	if err != nil {
+		panic(err)
+	}
+	userResponse := authentication.UserDetails(jwtString)
+	c.JSON(http.StatusOK, userResponse)
 }
 
 // InitRoutes starts authentication routes
@@ -92,11 +106,13 @@ func InitRoutes(store cookie.Store) {
 		ClientSecret: credentials.Csecret,
 		RedirectURL:  "http://localhost:3000",
 		Scopes: []string{
-			"https://www.googleapis.com/auth/userinfo.profile", // You have to select your own scope from here -> https://developers.google.com/identity/protocols/googlescopes#google_sign-in
+			"https://www.googleapis.com/auth/userinfo.profile",
+			"https://www.googleapis.com/auth/userinfo.email", // You have to select your own scope from here -> https://developers.google.com/identity/protocols/googlescopes#google_sign-in
 		},
 		Endpoint: google.Endpoint,
 	}
 
 	constants.Router.GET("/auth/login", loginHandler)
+	constants.Router.GET("/auth/user-details", getUserDetails)
 	constants.Router.GET("/auth", authHandler)
 }
