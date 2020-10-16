@@ -1,22 +1,22 @@
-<script lang='typescript'>
+<script lang="ts">
 	import { dnd_store } from "../stores/dnd_game_store";
 	import GameBoard from "./GameBoard.svelte";
 	import { fade, fly } from "svelte/transition";
 	import GameOver from "./GameOver.svelte";
 
-  export let dnd_content;
-  // TS/Svelte requires this pattern for reactive declarations (https://blog.scottlogic.com/2020/07/24/svelte-ts.html)
-  let updatedRound: number;
-  $: updatedRound = 1;
+	export let dnd_content;
+	// TS/Svelte requires this pattern for reactive declarations (https://blog.scottlogic.com/2020/07/24/svelte-ts.html)
+	let updatedRound: number;
+	$: updatedRound = 1;
 
-  interface ColHeadings {
-    col1Heading: string,
-		col2Heading: string,
-		col3Heading: string,
-		col4Heading: string,
-		col5Heading: string
-  }
-  let colHeadings: ColHeadings;
+	interface ColHeadings {
+		col1Heading: string;
+		col2Heading: string;
+		col3Heading: string;
+		col4Heading: string;
+		col5Heading: string;
+	}
+	let colHeadings: ColHeadings;
 	$: colHeadings = updatedRound === 1 ? dnd_content.dndgame1 : dnd_content.dndgame2;
 	$: pieces = updatedRound === 1 ? dnd_content.pieces1 : dnd_content.pieces2;
 	$: round = updatedRound;
