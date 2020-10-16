@@ -2,35 +2,41 @@
   "bundler": "rollup",
   "shimport": "2.0.4",
   "assets": {
-    "main": "client.25beedd6.js"
+    "main": "client.44e0dd9d.js"
   },
   "css": {
     "main": [
-      "client-e118e612.css"
+      "client-1440e36d.css"
     ]
   },
   "dependencies": {
     "index.svelte": [
-      "index.cd0aa7f9.js",
-      "inject_styles.5607aec6.js",
-      "index-39716d32.css"
-    ],
-    "about.svelte": [
-      "about.543eb035.js",
+      "index.bb25ed62.js",
       "inject_styles.5607aec6.js"
     ],
-    "blog/index.svelte": [
-      "index.0230aec3.js",
-      "inject_styles.5607aec6.js",
-      "index-7ed37c94.css"
+    "content.svelte": [
+      "content.91cc7ca4.js",
+      "inject_styles.5607aec6.js"
     ],
-    "blog/[slug].svelte": [
-      "[slug].51ced16e.js",
+    "dndgame/[dnd_unit].svelte": [
+      "[dnd_unit].e1232a5b.js",
+      "index.e1291cbb.js",
       "inject_styles.5607aec6.js",
-      "[slug]-5bc8f95f.css"
+      "[dnd_unit]-c91bcac7.css"
+    ],
+    "games.svelte": [
+      "games.a791db42.js",
+      "index.e1291cbb.js",
+      "inject_styles.5607aec6.js",
+      "games-efad3077.css"
+    ],
+    "[unit].svelte": [
+      "[unit].c098baa1.js",
+      "inject_styles.5607aec6.js",
+      "[unit]-40239133.css"
     ]
   },
   "legacy_assets": {
-    "main": "client.2981770c.js"
+    "main": "client.68e9e954.js"
   }
 }

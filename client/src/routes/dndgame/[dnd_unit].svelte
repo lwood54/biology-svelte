@@ -1,4 +1,4 @@
-<script context="module">
+<script context="module" lang="ts">
 	export async function preload(page, session) {
 		const { dnd_unit } = page.params;
 		const res = await this.fetch(`data/${dnd_unit}.json`);

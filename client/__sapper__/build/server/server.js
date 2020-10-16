@@ -5,6 +5,7 @@ var polka = require('polka');
 var compression = require('compression');
 var fs = require('fs');
 var path = require('path');
+var axios = require('axios');
 var Stream = require('stream');
 var http = require('http');
 var Url = require('url');
@@ -18,154 +19,12 @@ var polka__default = /*#__PURE__*/_interopDefaultLegacy(polka);
 var compression__default = /*#__PURE__*/_interopDefaultLegacy(compression);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 var path__default = /*#__PURE__*/_interopDefaultLegacy(path);
+var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
 var Stream__default = /*#__PURE__*/_interopDefaultLegacy(Stream);
 var http__default = /*#__PURE__*/_interopDefaultLegacy(http);
 var Url__default = /*#__PURE__*/_interopDefaultLegacy(Url);
 var https__default = /*#__PURE__*/_interopDefaultLegacy(https);
 var zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
-
-// Ordinarily, you'd generate this data from markdown files in your
-// repo, or fetch them from a database of some kind. But in order to
-// avoid unnecessary dependencies in the starter template, and in the
-// service of obviousness, we're just going to leave it here.
-
-// This file is called `_posts.js` rather than `posts.js`, because
-// we don't want to create an `/blog/posts` route — the leading
-// underscore tells Sapper not to do that.
-
-const posts = [
-	{
-		title: 'What is Sapper?',
-		slug: 'what-is-sapper',
-		html: `
-			<p>First, you have to know what <a href='https://svelte.dev'>Svelte</a> is. Svelte is a UI framework with a bold new idea: rather than providing a library that you write code with (like React or Vue, for example), it's a compiler that turns your components into highly optimized vanilla JavaScript. If you haven't already read the <a href='https://svelte.dev/blog/frameworks-without-the-framework'>introductory blog post</a>, you should!</p>
-
-			<p>Sapper is a Next.js-style framework (<a href='blog/how-is-sapper-different-from-next'>more on that here</a>) built around Svelte. It makes it embarrassingly easy to create extremely high performance web apps. Out of the box, you get:</p>
-
-			<ul>
-				<li>Code-splitting, dynamic imports and hot module replacement, powered by webpack</li>
-				<li>Server-side rendering (SSR) with client-side hydration</li>
-				<li>Service worker for offline support, and all the PWA bells and whistles</li>
-				<li>The nicest development experience you've ever had, or your money back</li>
-			</ul>
-
-			<p>It's implemented as Express middleware. Everything is set up and waiting for you to get started, but you keep complete control over the server, service worker, webpack config and everything else, so it's as flexible as you need it to be.</p>
-		`
-	},
-
-	{
-		title: 'How to use Sapper',
-		slug: 'how-to-use-sapper',
-		html: `
-			<h2>Step one</h2>
-			<p>Create a new project, using <a href='https://github.com/Rich-Harris/degit'>degit</a>:</p>
-
-			<pre><code>npx degit "sveltejs/sapper-template#rollup" my-app
-			cd my-app
-			npm install # or yarn!
-			npm run dev
-			</code></pre>
-
-			<h2>Step two</h2>
-			<p>Go to <a href='http://localhost:3000'>localhost:3000</a>. Open <code>my-app</code> in your editor. Edit the files in the <code>src/routes</code> directory or add new ones.</p>
-
-			<h2>Step three</h2>
-			<p>...</p>
-
-			<h2>Step four</h2>
-			<p>Resist overdone joke formats.</p>
-		`
-	},
-
-	{
-		title: 'Why the name?',
-		slug: 'why-the-name',
-		html: `
-			<p>In war, the soldiers who build bridges, repair roads, clear minefields and conduct demolitions — all under combat conditions — are known as <em>sappers</em>.</p>
-
-			<p>For web developers, the stakes are generally lower than those for combat engineers. But we face our own hostile environment: underpowered devices, poor network connections, and the complexity inherent in front-end engineering. Sapper, which is short for <strong>S</strong>velte <strong>app</strong> mak<strong>er</strong>, is your courageous and dutiful ally.</p>
-		`
-	},
-
-	{
-		title: 'How is Sapper different from Next.js?',
-		slug: 'how-is-sapper-different-from-next',
-		html: `
-			<p><a href='https://github.com/zeit/next.js'>Next.js</a> is a React framework from <a href='https://vercel.com/'>Vercel</a>, and is the inspiration for Sapper. There are a few notable differences, however:</p>
-
-			<ul>
-				<li>It's powered by <a href='https://svelte.dev'>Svelte</a> instead of React, so it's faster and your apps are smaller</li>
-				<li>Instead of route masking, we encode route parameters in filenames. For example, the page you're looking at right now is <code>src/routes/blog/[slug].svelte</code></li>
-				<li>As well as pages (Svelte components, which render on server or client), you can create <em>server routes</em> in your <code>routes</code> directory. These are just <code>.js</code> files that export functions corresponding to HTTP methods, and receive Express <code>request</code> and <code>response</code> objects as arguments. This makes it very easy to, for example, add a JSON API such as the one <a href='blog/how-is-sapper-different-from-next.json'>powering this very page</a></li>
-				<li>Links are just <code>&lt;a&gt;</code> elements, rather than framework-specific <code>&lt;Link&gt;</code> components. That means, for example, that <a href='blog/how-can-i-get-involved'>this link right here</a>, despite being inside a blob of HTML, works with the router as you'd expect.</li>
-			</ul>
-		`
-	},
-
-	{
-		title: 'How can I get involved?',
-		slug: 'how-can-i-get-involved',
-		html: `
-			<p>We're so glad you asked! Come on over to the <a href='https://github.com/sveltejs/svelte'>Svelte</a> and <a href='https://github.com/sveltejs/sapper'>Sapper</a> repos, and join us in the <a href='https://svelte.dev/chat'>Discord chatroom</a>. Everyone is welcome, especially you!</p>
-		`
-	}
-];
-
-posts.forEach(post => {
-	post.html = post.html.replace(/^\t{3}/gm, '');
-});
-
-const contents = JSON.stringify(posts.map(post => {
-	return {
-		title: post.title,
-		slug: post.slug
-	};
-}));
-
-function get(req, res) {
-	res.writeHead(200, {
-		'Content-Type': 'application/json'
-	});
-
-	res.end(contents);
-}
-
-var route_0 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	get: get
-});
-
-const lookup = new Map();
-posts.forEach(post => {
-	lookup.set(post.slug, JSON.stringify(post));
-});
-
-function get$1(req, res, next) {
-	// the `slug` parameter is available because
-	// this file is called [slug].json.js
-	const { slug } = req.params;
-
-	if (lookup.has(slug)) {
-		res.writeHead(200, {
-			'Content-Type': 'application/json'
-		});
-
-		res.end(lookup.get(slug));
-	} else {
-		res.writeHead(404, {
-			'Content-Type': 'application/json'
-		});
-
-		res.end(JSON.stringify({
-			message: `Not found`
-		}));
-	}
-}
-
-var route_1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	get: get$1
-});
 
 function noop() { }
 function run(fn) {
@@ -180,6 +39,26 @@ function run_all(fns) {
 function safe_not_equal(a, b) {
     return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
 }
+function subscribe(store, ...callbacks) {
+    if (store == null) {
+        return noop;
+    }
+    const unsub = store.subscribe(...callbacks);
+    return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
+}
+function get_store_value(store) {
+    let value;
+    subscribe(store, _ => value = _)();
+    return value;
+}
+function null_to_empty(value) {
+    return value == null ? '' : value;
+}
+function custom_event(type, detail) {
+    const e = document.createEvent('CustomEvent');
+    e.initCustomEvent(type, false, false, detail);
+    return e;
+}
 
 let current_component;
 function set_current_component(component) {
@@ -190,8 +69,25 @@ function get_current_component() {
         throw new Error(`Function called outside component initialization`);
     return current_component;
 }
+function onMount(fn) {
+    get_current_component().$$.on_mount.push(fn);
+}
 function afterUpdate(fn) {
     get_current_component().$$.after_update.push(fn);
+}
+function createEventDispatcher() {
+    const component = get_current_component();
+    return (type, detail) => {
+        const callbacks = component.$$.callbacks[type];
+        if (callbacks) {
+            // TODO are there situations where events could be dispatched
+            // in a server (non-DOM) environment?
+            const event = custom_event(type, detail);
+            callbacks.slice().forEach(fn => {
+                fn.call(component, event);
+            });
+        }
+    };
 }
 function setContext(key, context) {
     get_current_component().$$.context.set(key, context);
@@ -266,282 +162,66 @@ function add_attribute(name, value, boolean) {
     return ` ${name}${value === true ? '' : `=${typeof value === 'string' ? JSON.stringify(escape(value)) : `"${value}"`}`}`;
 }
 
-var successkid = "/client/465898c830bb9d2c.jpg";
-
 /* src/routes/index.svelte generated by Svelte v3.29.0 */
 
-const css = {
-	code: "h1.svelte-1kk9opm,figure.svelte-1kk9opm,p.svelte-1kk9opm{text-align:center;margin:0 auto}h1.svelte-1kk9opm{font-size:2.8em;text-transform:uppercase;font-weight:700;margin:0 0 0.5em 0}figure.svelte-1kk9opm{margin:0 0 1em 0}img.svelte-1kk9opm{width:100%;max-width:400px;margin:0 0 1em 0}p.svelte-1kk9opm{margin:1em auto}@media(min-width: 480px){h1.svelte-1kk9opm{font-size:4em}}",
-	map: "{\"version\":3,\"file\":\"index.svelte\",\"sources\":[\"index.svelte\"],\"sourcesContent\":[\"<script>\\n\\timport successkid from 'images/successkid.jpg';\\n</script>\\n\\n<style>\\n\\th1, figure, p {\\n\\t\\ttext-align: center;\\n\\t\\tmargin: 0 auto;\\n\\t}\\n\\n\\th1 {\\n\\t\\tfont-size: 2.8em;\\n\\t\\ttext-transform: uppercase;\\n\\t\\tfont-weight: 700;\\n\\t\\tmargin: 0 0 0.5em 0;\\n\\t}\\n\\n\\tfigure {\\n\\t\\tmargin: 0 0 1em 0;\\n\\t}\\n\\n\\timg {\\n\\t\\twidth: 100%;\\n\\t\\tmax-width: 400px;\\n\\t\\tmargin: 0 0 1em 0;\\n\\t}\\n\\n\\tp {\\n\\t\\tmargin: 1em auto;\\n\\t}\\n\\n\\t@media (min-width: 480px) {\\n\\t\\th1 {\\n\\t\\t\\tfont-size: 4em;\\n\\t\\t}\\n\\t}\\n</style>\\n\\n<svelte:head>\\n\\t<title>Sapper project template</title>\\n</svelte:head>\\n\\n<h1>Great success!</h1>\\n\\n<figure>\\n\\t<img alt=\\\"Success Kid\\\" src=\\\"{successkid}\\\">\\n\\t<figcaption>Have fun with Sapper!</figcaption>\\n</figure>\\n\\n<p><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>\\n\"],\"names\":[],\"mappings\":\"AAKC,iBAAE,CAAE,qBAAM,CAAE,CAAC,eAAC,CAAC,AACd,UAAU,CAAE,MAAM,CAClB,MAAM,CAAE,CAAC,CAAC,IAAI,AACf,CAAC,AAED,EAAE,eAAC,CAAC,AACH,SAAS,CAAE,KAAK,CAChB,cAAc,CAAE,SAAS,CACzB,WAAW,CAAE,GAAG,CAChB,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,KAAK,CAAC,CAAC,AACpB,CAAC,AAED,MAAM,eAAC,CAAC,AACP,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,CAAC,AAClB,CAAC,AAED,GAAG,eAAC,CAAC,AACJ,KAAK,CAAE,IAAI,CACX,SAAS,CAAE,KAAK,CAChB,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,CAAC,AAClB,CAAC,AAED,CAAC,eAAC,CAAC,AACF,MAAM,CAAE,GAAG,CAAC,IAAI,AACjB,CAAC,AAED,MAAM,AAAC,YAAY,KAAK,CAAC,AAAC,CAAC,AAC1B,EAAE,eAAC,CAAC,AACH,SAAS,CAAE,GAAG,AACf,CAAC,AACF,CAAC\"}"
-};
-
 const Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-	$$result.css.add(css);
+	let loginBtn = "";
 
-	return `${($$result.head += `${($$result.title = `<title>Sapper project template</title>`, "")}`, "")}
+	onMount(async () => {
+		const urlParams = new URLSearchParams(window.location.search);
 
-<h1 class="${"svelte-1kk9opm"}">Great success!</h1>
+		if (urlParams.has("state")) {
+			await handleAuthCallback(urlParams);
+			return;
+		}
 
-<figure class="${"svelte-1kk9opm"}"><img alt="${"Success Kid"}"${add_attribute("src", successkid, 0)} class="${"svelte-1kk9opm"}">
-	<figcaption>Have fun with Sapper!</figcaption></figure>
+		await getLoginBtn();
+	});
 
-<p class="${"svelte-1kk9opm"}"><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>`;
+	async function getLoginBtn() {
+		try {
+			const res = await axios__default['default'].get("http://localhost:8080/auth/login", { withCredentials: true });
+			loginBtn = res.data;
+		} catch(e) {
+			console.error(e);
+		}
+	}
+
+	async function handleAuthCallback(urlParams) {
+		const res = await axios__default['default'].get("http://localhost:8080/auth", {
+			withCredentials: true,
+			params: {
+				state: urlParams.get("state"),
+				code: urlParams.get("code"),
+				scope: urlParams.get("scope")
+			}
+		});
+
+		console.log(res.data);
+	}
+
+	return `${($$result.head += `${($$result.title = `<title>Mr. Wood&#39;s Biology Page</title>`, "")}`, "")}
+
+<h3>Login</h3>
+${loginBtn}
+<button>login check</button>`;
 });
 
 var component_0 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	'default': Routes
+    __proto__: null,
+    'default': Routes
 });
 
-/* src/routes/about.svelte generated by Svelte v3.29.0 */
+/* src/routes/content.svelte generated by Svelte v3.29.0 */
 
-const About = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-	return `${($$result.head += `${($$result.title = `<title>About</title>`, "")}`, "")}
-
-<h1>About this site</h1>
-
-<p>This is the &#39;about&#39; page. There&#39;s not much here.</p>`;
+const Content = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	return `<h1>Content</h1>`;
 });
 
 var component_1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	'default': About
+    __proto__: null,
+    'default': Content
 });
-
-/* src/routes/blog/index.svelte generated by Svelte v3.29.0 */
-
-const css$1 = {
-	code: "ul.svelte-1frg2tf{margin:0 0 1em 0;line-height:1.5}",
-	map: "{\"version\":3,\"file\":\"index.svelte\",\"sources\":[\"index.svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\" lang=\\\"ts\\\">export function preload() {\\n    return this.fetch(`blog.json`).then((r) => r.json()).then((posts) => {\\n        return { posts };\\n    });\\n}\\n</script>\\n\\n<script lang=\\\"ts\\\">export let posts;\\n</script>\\n\\n<style>\\n\\tul {\\n\\t\\tmargin: 0 0 1em 0;\\n\\t\\tline-height: 1.5;\\n\\t}\\n</style>\\n\\n<svelte:head>\\n\\t<title>Blog</title>\\n</svelte:head>\\n\\n<h1>Recent posts</h1>\\n\\n<ul>\\n\\t{#each posts as post}\\n\\t\\t<!-- we're using the non-standard `rel=prefetch` attribute to\\n\\t\\t\\t\\ttell Sapper to load the data for the page as soon as\\n\\t\\t\\t\\tthe user hovers over the link or taps it, instead of\\n\\t\\t\\t\\twaiting for the 'click' event -->\\n\\t\\t<li><a rel=\\\"prefetch\\\" href=\\\"blog/{post.slug}\\\">{post.title}</a></li>\\n\\t{/each}\\n</ul>\\n\"],\"names\":[],\"mappings\":\"AAWC,EAAE,eAAC,CAAC,AACH,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,CAAC,CACjB,WAAW,CAAE,GAAG,AACjB,CAAC\"}"
-};
-
-function preload() {
-	return this.fetch(`blog.json`).then(r => r.json()).then(posts => {
-		return { posts };
-	});
-}
-
-const Blog = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-	let { posts } = $$props;
-	if ($$props.posts === void 0 && $$bindings.posts && posts !== void 0) $$bindings.posts(posts);
-	$$result.css.add(css$1);
-
-	return `${($$result.head += `${($$result.title = `<title>Blog</title>`, "")}`, "")}
-
-<h1>Recent posts</h1>
-
-<ul class="${"svelte-1frg2tf"}">${each(posts, post => `
-		<li><a rel="${"prefetch"}" href="${"blog/" + escape(post.slug)}">${escape(post.title)}</a></li>`)}</ul>`;
-});
-
-var component_2 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	'default': Blog,
-	preload: preload
-});
-
-/* src/routes/blog/[slug].svelte generated by Svelte v3.29.0 */
-
-const css$2 = {
-	code: ".content.svelte-emm3f3 h2{font-size:1.4em;font-weight:500}.content.svelte-emm3f3 pre{background-color:#f9f9f9;box-shadow:inset 1px 1px 5px rgba(0, 0, 0, 0.05);padding:0.5em;border-radius:2px;overflow-x:auto}.content.svelte-emm3f3 pre code{background-color:transparent;padding:0}.content.svelte-emm3f3 ul{line-height:1.5}.content.svelte-emm3f3 li{margin:0 0 0.5em 0}",
-	map: "{\"version\":3,\"file\":\"[slug].svelte\",\"sources\":[\"[slug].svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\" lang=\\\"ts\\\">var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\\n    return new (P || (P = Promise))(function (resolve, reject) {\\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\\n        function rejected(value) { try { step(generator[\\\"throw\\\"](value)); } catch (e) { reject(e); } }\\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\\n    });\\n};\\nexport function preload({ params }) {\\n    return __awaiter(this, void 0, void 0, function* () {\\n        // the `slug` parameter is available because\\n        // this file is called [slug].svelte\\n        const res = yield this.fetch(`blog/${params.slug}.json`);\\n        const data = yield res.json();\\n        if (res.status === 200) {\\n            return { post: data };\\n        }\\n        else {\\n            this.error(res.status, data.message);\\n        }\\n    });\\n}\\n</script>\\n\\n<script lang=\\\"ts\\\">export let post;\\n</script>\\n\\n<style>\\n\\t/*\\n\\t\\tBy default, CSS is locally scoped to the component,\\n\\t\\tand any unused styles are dead-code-eliminated.\\n\\t\\tIn this page, Svelte can't know which elements are\\n\\t\\tgoing to appear inside the {{{post.html}}} block,\\n\\t\\tso we have to use the :global(...) modifier to target\\n\\t\\tall elements inside .content\\n\\t*/\\n\\t.content :global(h2) {\\n\\t\\tfont-size: 1.4em;\\n\\t\\tfont-weight: 500;\\n\\t}\\n\\n\\t.content :global(pre) {\\n\\t\\tbackground-color: #f9f9f9;\\n\\t\\tbox-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.05);\\n\\t\\tpadding: 0.5em;\\n\\t\\tborder-radius: 2px;\\n\\t\\toverflow-x: auto;\\n\\t}\\n\\n\\t.content :global(pre) :global(code) {\\n\\t\\tbackground-color: transparent;\\n\\t\\tpadding: 0;\\n\\t}\\n\\n\\t.content :global(ul) {\\n\\t\\tline-height: 1.5;\\n\\t}\\n\\n\\t.content :global(li) {\\n\\t\\tmargin: 0 0 0.5em 0;\\n\\t}\\n</style>\\n\\n<svelte:head>\\n\\t<title>{post.title}</title>\\n</svelte:head>\\n\\n<h1>{post.title}</h1>\\n\\n<div class=\\\"content\\\">\\n\\t{@html post.html}\\n</div>\\n\"],\"names\":[],\"mappings\":\"AAqCC,sBAAQ,CAAC,AAAQ,EAAE,AAAE,CAAC,AACrB,SAAS,CAAE,KAAK,CAChB,WAAW,CAAE,GAAG,AACjB,CAAC,AAED,sBAAQ,CAAC,AAAQ,GAAG,AAAE,CAAC,AACtB,gBAAgB,CAAE,OAAO,CACzB,UAAU,CAAE,KAAK,CAAC,GAAG,CAAC,GAAG,CAAC,GAAG,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,CACjD,OAAO,CAAE,KAAK,CACd,aAAa,CAAE,GAAG,CAClB,UAAU,CAAE,IAAI,AACjB,CAAC,AAED,sBAAQ,CAAC,AAAQ,GAAG,AAAC,CAAC,AAAQ,IAAI,AAAE,CAAC,AACpC,gBAAgB,CAAE,WAAW,CAC7B,OAAO,CAAE,CAAC,AACX,CAAC,AAED,sBAAQ,CAAC,AAAQ,EAAE,AAAE,CAAC,AACrB,WAAW,CAAE,GAAG,AACjB,CAAC,AAED,sBAAQ,CAAC,AAAQ,EAAE,AAAE,CAAC,AACrB,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,KAAK,CAAC,CAAC,AACpB,CAAC\"}"
-};
-
-var __awaiter = undefined && undefined.__awaiter || function (thisArg, _arguments, P, generator) {
-	function adopt(value) {
-		return value instanceof P
-		? value
-		: new P(function (resolve) {
-					resolve(value);
-				});
-	}
-
-	return new (P || (P = Promise))(function (resolve, reject) {
-			function fulfilled(value) {
-				try {
-					step(generator.next(value));
-				} catch(e) {
-					reject(e);
-				}
-			}
-
-			function rejected(value) {
-				try {
-					step(generator["throw"](value));
-				} catch(e) {
-					reject(e);
-				}
-			}
-
-			function step(result) {
-				result.done
-				? resolve(result.value)
-				: adopt(result.value).then(fulfilled, rejected);
-			}
-
-			step((generator = generator.apply(thisArg, _arguments || [])).next());
-		});
-};
-
-function preload$1({ params }) {
-	return __awaiter(this, void 0, void 0, function* () {
-		// the `slug` parameter is available because
-		// this file is called [slug].svelte
-		const res = yield this.fetch(`blog/${params.slug}.json`);
-
-		const data = yield res.json();
-
-		if (res.status === 200) {
-			return { post: data };
-		} else {
-			this.error(res.status, data.message);
-		}
-	});
-}
-
-const U5Bslugu5D = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-	let { post } = $$props;
-	if ($$props.post === void 0 && $$bindings.post && post !== void 0) $$bindings.post(post);
-	$$result.css.add(css$2);
-
-	return `${($$result.head += `${($$result.title = `<title>${escape(post.title)}</title>`, "")}`, "")}
-
-<h1>${escape(post.title)}</h1>
-
-<div class="${"content svelte-emm3f3"}">${post.html}</div>`;
-});
-
-var component_3 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	'default': U5Bslugu5D,
-	preload: preload$1
-});
-
-/* src/components/Nav.svelte generated by Svelte v3.29.0 */
-
-const css$3 = {
-	code: "nav.svelte-1dbd5up{border-bottom:1px solid rgba(255,62,0,0.1);font-weight:300;padding:0 1em}ul.svelte-1dbd5up{margin:0;padding:0}ul.svelte-1dbd5up::after{content:'';display:block;clear:both}li.svelte-1dbd5up{display:block;float:left}[aria-current].svelte-1dbd5up{position:relative;display:inline-block}[aria-current].svelte-1dbd5up::after{position:absolute;content:'';width:calc(100% - 1em);height:2px;background-color:rgb(255,62,0);display:block;bottom:-1px}a.svelte-1dbd5up{text-decoration:none;padding:1em 0.5em;display:block}",
-	map: "{\"version\":3,\"file\":\"Nav.svelte\",\"sources\":[\"Nav.svelte\"],\"sourcesContent\":[\"<script lang=\\\"ts\\\">export let segment;\\n</script>\\n\\n<style>\\n\\tnav {\\n\\t\\tborder-bottom: 1px solid rgba(255,62,0,0.1);\\n\\t\\tfont-weight: 300;\\n\\t\\tpadding: 0 1em;\\n\\t}\\n\\n\\tul {\\n\\t\\tmargin: 0;\\n\\t\\tpadding: 0;\\n\\t}\\n\\n\\t/* clearfix */\\n\\tul::after {\\n\\t\\tcontent: '';\\n\\t\\tdisplay: block;\\n\\t\\tclear: both;\\n\\t}\\n\\n\\tli {\\n\\t\\tdisplay: block;\\n\\t\\tfloat: left;\\n\\t}\\n\\n\\t[aria-current] {\\n\\t\\tposition: relative;\\n\\t\\tdisplay: inline-block;\\n\\t}\\n\\n\\t[aria-current]::after {\\n\\t\\tposition: absolute;\\n\\t\\tcontent: '';\\n\\t\\twidth: calc(100% - 1em);\\n\\t\\theight: 2px;\\n\\t\\tbackground-color: rgb(255,62,0);\\n\\t\\tdisplay: block;\\n\\t\\tbottom: -1px;\\n\\t}\\n\\n\\ta {\\n\\t\\ttext-decoration: none;\\n\\t\\tpadding: 1em 0.5em;\\n\\t\\tdisplay: block;\\n\\t}\\n</style>\\n\\n<nav>\\n\\t<ul>\\n\\t\\t<li><a aria-current=\\\"{segment === undefined ? 'page' : undefined}\\\" href=\\\".\\\">home</a></li>\\n\\t\\t<li><a aria-current=\\\"{segment === 'about' ? 'page' : undefined}\\\" href=\\\"about\\\">about</a></li>\\n\\n\\t\\t<!-- for the blog link, we're using rel=prefetch so that Sapper prefetches\\n\\t\\t     the blog data when we hover over the link or tap it on a touchscreen -->\\n\\t\\t<li><a rel=prefetch aria-current=\\\"{segment === 'blog' ? 'page' : undefined}\\\" href=\\\"blog\\\">blog</a></li>\\n\\t</ul>\\n</nav>\\n\"],\"names\":[],\"mappings\":\"AAIC,GAAG,eAAC,CAAC,AACJ,aAAa,CAAE,GAAG,CAAC,KAAK,CAAC,KAAK,GAAG,CAAC,EAAE,CAAC,CAAC,CAAC,GAAG,CAAC,CAC3C,WAAW,CAAE,GAAG,CAChB,OAAO,CAAE,CAAC,CAAC,GAAG,AACf,CAAC,AAED,EAAE,eAAC,CAAC,AACH,MAAM,CAAE,CAAC,CACT,OAAO,CAAE,CAAC,AACX,CAAC,AAGD,iBAAE,OAAO,AAAC,CAAC,AACV,OAAO,CAAE,EAAE,CACX,OAAO,CAAE,KAAK,CACd,KAAK,CAAE,IAAI,AACZ,CAAC,AAED,EAAE,eAAC,CAAC,AACH,OAAO,CAAE,KAAK,CACd,KAAK,CAAE,IAAI,AACZ,CAAC,AAED,CAAC,YAAY,CAAC,eAAC,CAAC,AACf,QAAQ,CAAE,QAAQ,CAClB,OAAO,CAAE,YAAY,AACtB,CAAC,AAED,CAAC,YAAY,gBAAC,OAAO,AAAC,CAAC,AACtB,QAAQ,CAAE,QAAQ,CAClB,OAAO,CAAE,EAAE,CACX,KAAK,CAAE,KAAK,IAAI,CAAC,CAAC,CAAC,GAAG,CAAC,CACvB,MAAM,CAAE,GAAG,CACX,gBAAgB,CAAE,IAAI,GAAG,CAAC,EAAE,CAAC,CAAC,CAAC,CAC/B,OAAO,CAAE,KAAK,CACd,MAAM,CAAE,IAAI,AACb,CAAC,AAED,CAAC,eAAC,CAAC,AACF,eAAe,CAAE,IAAI,CACrB,OAAO,CAAE,GAAG,CAAC,KAAK,CAClB,OAAO,CAAE,KAAK,AACf,CAAC\"}"
-};
-
-const Nav = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-	let { segment } = $$props;
-	if ($$props.segment === void 0 && $$bindings.segment && segment !== void 0) $$bindings.segment(segment);
-	$$result.css.add(css$3);
-
-	return `<nav class="${"svelte-1dbd5up"}"><ul class="${"svelte-1dbd5up"}"><li class="${"svelte-1dbd5up"}"><a${add_attribute("aria-current", segment === undefined ? "page" : undefined, 0)} href="${"."}" class="${"svelte-1dbd5up"}">home</a></li>
-		<li class="${"svelte-1dbd5up"}"><a${add_attribute("aria-current", segment === "about" ? "page" : undefined, 0)} href="${"about"}" class="${"svelte-1dbd5up"}">about</a></li>
-
-		
-		<li class="${"svelte-1dbd5up"}"><a rel="${"prefetch"}"${add_attribute("aria-current", segment === "blog" ? "page" : undefined, 0)} href="${"blog"}" class="${"svelte-1dbd5up"}">blog</a></li></ul></nav>`;
-});
-
-/* src/routes/_layout.svelte generated by Svelte v3.29.0 */
-
-const css$4 = {
-	code: "main.svelte-1uhnsl8{position:relative;max-width:56em;background-color:white;padding:2em;margin:0 auto;box-sizing:border-box}",
-	map: "{\"version\":3,\"file\":\"_layout.svelte\",\"sources\":[\"_layout.svelte\"],\"sourcesContent\":[\"<script lang=\\\"ts\\\">import Nav from '../components/Nav.svelte';\\nexport let segment;\\n</script>\\n\\n<style>\\n\\tmain {\\n\\t\\tposition: relative;\\n\\t\\tmax-width: 56em;\\n\\t\\tbackground-color: white;\\n\\t\\tpadding: 2em;\\n\\t\\tmargin: 0 auto;\\n\\t\\tbox-sizing: border-box;\\n\\t}\\n</style>\\n\\n<Nav {segment}/>\\n\\n<main>\\n\\t<slot></slot>\\n</main>\"],\"names\":[],\"mappings\":\"AAKC,IAAI,eAAC,CAAC,AACL,QAAQ,CAAE,QAAQ,CAClB,SAAS,CAAE,IAAI,CACf,gBAAgB,CAAE,KAAK,CACvB,OAAO,CAAE,GAAG,CACZ,MAAM,CAAE,CAAC,CAAC,IAAI,CACd,UAAU,CAAE,UAAU,AACvB,CAAC\"}"
-};
-
-const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-	let { segment } = $$props;
-	if ($$props.segment === void 0 && $$bindings.segment && segment !== void 0) $$bindings.segment(segment);
-	$$result.css.add(css$4);
-
-	return `${validate_component(Nav, "Nav").$$render($$result, { segment }, {}, {})}
-
-<main class="${"svelte-1uhnsl8"}">${slots.default ? slots.default({}) : ``}</main>`;
-});
-
-var root_comp = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	'default': Layout
-});
-
-/* src/routes/_error.svelte generated by Svelte v3.29.0 */
-
-const css$5 = {
-	code: "h1.svelte-8od9u6,p.svelte-8od9u6{margin:0 auto}h1.svelte-8od9u6{font-size:2.8em;font-weight:700;margin:0 0 0.5em 0}p.svelte-8od9u6{margin:1em auto}@media(min-width: 480px){h1.svelte-8od9u6{font-size:4em}}",
-	map: "{\"version\":3,\"file\":\"_error.svelte\",\"sources\":[\"_error.svelte\"],\"sourcesContent\":[\"<script lang=\\\"ts\\\">export let status;\\nexport let error;\\nconst dev = undefined === 'development';\\n</script>\\n\\n<style>\\n\\th1, p {\\n\\t\\tmargin: 0 auto;\\n\\t}\\n\\n\\th1 {\\n\\t\\tfont-size: 2.8em;\\n\\t\\tfont-weight: 700;\\n\\t\\tmargin: 0 0 0.5em 0;\\n\\t}\\n\\n\\tp {\\n\\t\\tmargin: 1em auto;\\n\\t}\\n\\n\\t@media (min-width: 480px) {\\n\\t\\th1 {\\n\\t\\t\\tfont-size: 4em;\\n\\t\\t}\\n\\t}\\n</style>\\n\\n<svelte:head>\\n\\t<title>{status}</title>\\n</svelte:head>\\n\\n<h1>{status}</h1>\\n\\n<p>{error.message}</p>\\n\\n{#if dev && error.stack}\\n\\t<pre>{error.stack}</pre>\\n{/if}\\n\"],\"names\":[],\"mappings\":\"AAMC,gBAAE,CAAE,CAAC,cAAC,CAAC,AACN,MAAM,CAAE,CAAC,CAAC,IAAI,AACf,CAAC,AAED,EAAE,cAAC,CAAC,AACH,SAAS,CAAE,KAAK,CAChB,WAAW,CAAE,GAAG,CAChB,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,KAAK,CAAC,CAAC,AACpB,CAAC,AAED,CAAC,cAAC,CAAC,AACF,MAAM,CAAE,GAAG,CAAC,IAAI,AACjB,CAAC,AAED,MAAM,AAAC,YAAY,KAAK,CAAC,AAAC,CAAC,AAC1B,EAAE,cAAC,CAAC,AACH,SAAS,CAAE,GAAG,AACf,CAAC,AACF,CAAC\"}"
-};
-
-const Error$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-	let { status } = $$props;
-	let { error } = $$props;
-	if ($$props.status === void 0 && $$bindings.status && status !== void 0) $$bindings.status(status);
-	if ($$props.error === void 0 && $$bindings.error && error !== void 0) $$bindings.error(error);
-	$$result.css.add(css$5);
-
-	return `${($$result.head += `${($$result.title = `<title>${escape(status)}</title>`, "")}`, "")}
-
-<h1 class="${"svelte-8od9u6"}">${escape(status)}</h1>
-
-<p class="${"svelte-8od9u6"}">${escape(error.message)}</p>
-
-${ ``}`;
-});
-
-// This file is generated by Sapper — do not edit it!
-
-const d = decodeURIComponent;
-
-const manifest = {
-	server_routes: [
-		{
-			// blog/index.json.js
-			pattern: /^\/blog\.json$/,
-			handlers: route_0,
-			params: () => ({})
-		},
-
-		{
-			// blog/[slug].json.js
-			pattern: /^\/blog\/([^/]+?)\.json$/,
-			handlers: route_1,
-			params: match => ({ slug: d(match[1]) })
-		}
-	],
-
-	pages: [
-		{
-			// index.svelte
-			pattern: /^\/$/,
-			parts: [
-				{ name: "index", file: "index.svelte", component: component_0 }
-			]
-		},
-
-		{
-			// about.svelte
-			pattern: /^\/about\/?$/,
-			parts: [
-				{ name: "about", file: "about.svelte", component: component_1 }
-			]
-		},
-
-		{
-			// blog/index.svelte
-			pattern: /^\/blog\/?$/,
-			parts: [
-				{ name: "blog", file: "blog/index.svelte", component: component_2 }
-			]
-		},
-
-		{
-			// blog/[slug].svelte
-			pattern: /^\/blog\/([^/]+?)\/?$/,
-			parts: [
-				null,
-				{ name: "blog_$slug", file: "blog/[slug].svelte", component: component_3, params: match => ({ slug: d(match[1]) }) }
-			]
-		}
-	],
-
-	root_comp,
-	error: Error$1
-};
-
-const build_dir = "__sapper__/build";
 
 const subscriber_queue = [];
 /**
@@ -594,6 +274,527 @@ function writable(value, start = noop) {
     }
     return { set, update, subscribe };
 }
+
+const dnd_store_data = writable({
+	totalCorrect: 0,
+	totalWrong: 0,
+	round1Correct: 0,
+	round1Wrong: 0,
+	round2Correct: 0,
+	round2Wrong: 0,
+	firstLoad: true,
+});
+
+const dnd_store = {
+	subscribe: dnd_store_data.subscribe,
+	incCorrectCount: (round) => {
+		dnd_store_data.update((data) => {
+			if (round === 1) {
+				const updatedData = {
+					...data,
+					round1Correct: data.round1Correct + 1,
+					totalCorrect: data.totalCorrect + 1,
+				};
+				return updatedData;
+			} else if (round === 2) {
+				const updatedData = {
+					...data,
+					round2Correct: data.round2Correct + 1,
+					totalCorrect: data.totalCorrect + 1,
+				};
+				return updatedData;
+			}
+		});
+	},
+	incWrongCount: (round) => {
+		dnd_store_data.update((data) => {
+			if (round === 1) {
+				const updatedData = {
+					...data,
+					round1Wrong: data.round1Wrong + 1,
+					totalWrong: data.totalWrong + 1,
+				};
+				return updatedData;
+			} else if (round === 2) {
+				const updatedData = {
+					...data,
+					round2Wrong: data.round2Wrong + 1,
+					totalWrong: data.totalWrong + 1,
+				};
+				return updatedData;
+			}
+		});
+	},
+	resetScores: () => {
+		dnd_store_data.set({
+			totalCorrect: 0,
+			totalWrong: 0,
+			round1Correct: 0,
+			round1Wrong: 0,
+			round2Correct: 0,
+			round2Wrong: 0,
+			firstLoad: true,
+		});
+	},
+	changeFirstLoad: (newBool) => {
+		dnd_store_data.update((data) => {
+			const updatedData = {
+				...data,
+				firstLoad: newBool,
+			};
+			return updatedData;
+		});
+	},
+};
+
+/* src/components/GameBoard.svelte generated by Svelte v3.29.0 */
+
+const css = {
+	code: "@import url(\"https://fonts.googleapis.com/css2?family=Spartan:wght@100;200;300;400;500&display=swap\");.svelte-ctpe5c.svelte-ctpe5c{font-family:\"Spartan\", sans-serif}.game-page.svelte-ctpe5c.svelte-ctpe5c{height:650px;width:100%;min-width:830px;max-width:1500px;margin:auto;box-sizing:border-box}.game-bar.svelte-ctpe5c.svelte-ctpe5c{display:flex;justify-content:space-between;margin:0.75rem}.pieces-container.svelte-ctpe5c.svelte-ctpe5c{height:145px;width:300px;display:flex;justify-content:flex-end;align-items:flex-start;position:relative}.pieces.svelte-ctpe5c.svelte-ctpe5c{display:flex;justify-content:center;text-align:center;align-items:top;height:110px;max-width:90%;position:absolute;overflow:hidden;padding:5% 5% 0 5%;background-color:#d8d8d8;color:#314541;line-height:1.15rem;border-radius:2px;cursor:grab;box-shadow:1px 2px 3px black;visibility:hidden}.pieces-container.svelte-ctpe5c div.svelte-ctpe5c:first-of-type{visibility:visible}.pieces.svelte-ctpe5c.svelte-ctpe5c::-webkit-scrollbar{display:none}.pieces.text.svelte-ctpe5c.svelte-ctpe5c{overflow:auto}.img-container.svelte-ctpe5c.svelte-ctpe5c{max-height:130px;padding:1px;display:flex;justify-content:center;box-shadow:1px 2px 3px black;align-items:center}.img-piece.svelte-ctpe5c.svelte-ctpe5c{max-height:90%;min-width:75px;max-width:100%;overflow:hidden;margin:0 5px}.score-container.svelte-ctpe5c.svelte-ctpe5c{display:flex;flex-direction:column;justify-content:flex-start}.score-item.svelte-ctpe5c.svelte-ctpe5c{margin-bottom:0.6rem}.round-label.svelte-ctpe5c.svelte-ctpe5c{display:flex;justify-content:center;align-items:center;height:114px;font-size:3rem}.target-container.svelte-ctpe5c.svelte-ctpe5c{height:70%;width:100%;display:flex;flex-direction:row;justify-content:space-evenly;flex-wrap:wrap;box-sizing:border-box;margin:0}.target.svelte-ctpe5c.svelte-ctpe5c{display:flex;justify-content:center;align-items:center;text-align:center;height:130px;width:100%;margin:0;border-radius:2px;box-sizing:border-box}.column.svelte-ctpe5c.svelte-ctpe5c{width:19%;max-height:100%;display:flex;flex-direction:column;justify-content:space-evenly;align-content:center;text-align:center;margin:0 0.25rem;margin:0;box-sizing:border-box}.c1.svelte-ctpe5c .target.svelte-ctpe5c,.c3.svelte-ctpe5c .target.svelte-ctpe5c,.c5.svelte-ctpe5c .target.svelte-ctpe5c{background-color:#0d223f;color:#77bc43}.c2.svelte-ctpe5c .target.svelte-ctpe5c,.c4.svelte-ctpe5c .target.svelte-ctpe5c{background-color:#77bc43;color:#0d223f}.colHeading.svelte-ctpe5c.svelte-ctpe5c{display:flex;justify-content:center;align-items:center;margin:0;height:35px;font-size:1rem}.c1.svelte-ctpe5c .colHeading.svelte-ctpe5c,.c3.svelte-ctpe5c .colHeading.svelte-ctpe5c,.c5.svelte-ctpe5c .colHeading.svelte-ctpe5c{background-color:#77bc43}.c2.svelte-ctpe5c .colHeading.svelte-ctpe5c,.c4.svelte-ctpe5c .colHeading.svelte-ctpe5c{background-color:#0d223f;color:#77bc43}@media screen and (max-width: 1120px){.pieces-container.svelte-ctpe5c.svelte-ctpe5c{margin-left:8px}}",
+	map: "{\"version\":3,\"file\":\"GameBoard.svelte\",\"sources\":[\"GameBoard.svelte\"],\"sourcesContent\":[\"<script lang=\\\"ts\\\">import { onMount, createEventDispatcher } from \\\"svelte\\\";\\nimport { fade } from \\\"svelte/transition\\\";\\nexport let colHeadings;\\nexport let pieces;\\nexport let round;\\nexport let title;\\nexport let dnd_store;\\nlet piecesArray = [];\\nlet piecesLeft = 30;\\nconst dispatch = createEventDispatcher();\\n$: if (piecesLeft <= 15) {\\n    // if current round is 1, then change to 2, else change to 3\\n    round = round === 1 ? 2 : 3;\\n    dispatch(\\\"checkround\\\", round);\\n}\\n$: {\\n    if (!$dnd_store.firstLoad && round === 1) {\\n        // reset only if game has been loaded and user is back to round 1\\n        dnd_store.resetScores();\\n    }\\n}\\nonMount(() => {\\n    piecesArray = [...pieces];\\n    piecesArray = shuffleArray(piecesArray);\\n    // firstLoad starts as true, and is immediately turned false\\n    // this will affect score reset onMount so that round 2 is not reset\\n    // but reset will happen when coming back after game is over\\n    dnd_store.changeFirstLoad(false);\\n});\\nconst shuffleArray = (array) => {\\n    // copy array to manipulate\\n    let arrayCopy = [...array];\\n    let mixedArray = [];\\n    // loop through copy until no elements left\\n    while (arrayCopy.length > 0) {\\n        let randNum = Math.floor(Math.random() * arrayCopy.length);\\n        // add removed elements to mixedArray as looping occurs\\n        mixedArray.push(arrayCopy.splice(randNum, 1)[0]);\\n    }\\n    return mixedArray;\\n};\\nconst dragItem = (e) => {\\n    if (e.target.tagName === \\\"IMG\\\") {\\n        e.dataTransfer.setData(\\\"text\\\", e.target.parentNode.id);\\n    }\\n    else {\\n        e.dataTransfer.setData(\\\"text\\\", e.target.id);\\n    }\\n};\\nconst dropItem = (e) => {\\n    // define pieces container to allow drop of item back into original spot\\n    let isPiecesContainer = hasClass(e.target, \\\"pieces-container\\\");\\n    // let parent = e.target.parentNode;\\n    let dragItemId = e.dataTransfer.getData(\\\"text\\\");\\n    let dragItem = document.getElementById(dragItemId);\\n    // if target to drop in is empty or the target is the pices container, you can drop item in\\n    if (!e.target.firstChild || isPiecesContainer) {\\n        // if the target is not the pieces container\\n        if (!isPiecesContainer) {\\n            // setting to static position so the div will be relative to parent\\n            dragItem.style.position = \\\"static\\\";\\n            // must make visible again because I am hadding all stacked pieces in\\n            // the pieces container to display only the top piece so as to not\\n            // stack box-shadows\\n            dragItem.style.visibility = \\\"visible\\\";\\n            //\\n            if (\\n            // check if parent has the odd numbered classes to adjust font color\\n            hasClass(e.target, \\\"col1\\\") ||\\n                hasClass(e.target, \\\"col3\\\") ||\\n                hasClass(e.target, \\\"col5\\\")) {\\n                dragItem.style.backgroundColor = \\\"transparent\\\";\\n                e.target.style.backgroundColor = \\\"#0d223f\\\"; // navy blue\\n                dragItem.style.color = \\\"#77bc43\\\";\\n            }\\n            else if (hasClass(e.target, \\\"col2\\\") || hasClass(e.target, \\\"col4\\\")) {\\n                dragItem.style.backgroundColor = \\\"transparent\\\";\\n                e.target.style.backgroundColor = \\\"#77bc43\\\"; // green\\n                dragItem.style.color = \\\"#0d223f\\\";\\n            }\\n            if (!checkIsMatch(e.target, dragItem)) {\\n                dnd_store.incWrongCount(round);\\n                e.target.style.backgroundColor = \\\"#bf1d1d\\\"; // bg = red\\n                dragItem.style.color = \\\"#e8e1e1\\\"; // font color = light gray\\n            }\\n            else if (checkIsMatch(e.target, dragItem)) {\\n                dnd_store.incCorrectCount(round);\\n                if (dragItem.children.length >= 1) {\\n                    if (dragItem.children[0].tagName === \\\"IMG\\\") {\\n                        dragItem.children[0].setAttribute(\\\"draggable\\\", \\\"false\\\");\\n                        // typecast because style property does not exist on type 'element'\\n                        dragItem.children[0].style.cursor = \\\"no-drop\\\";\\n                        dragItem.style.maxHeight = \\\"110px\\\";\\n                    }\\n                }\\n                else {\\n                    dragItem.style.overflow = \\\"auto\\\";\\n                }\\n                dragItem.setAttribute(\\\"draggable\\\", \\\"false\\\");\\n                dragItem.style.border = \\\"none\\\";\\n                dragItem.style.userSelect = \\\"none\\\";\\n                dragItem.style.boxShadow = \\\"none\\\";\\n                dragItem.style.cursor = \\\"no-drop\\\";\\n            }\\n        }\\n        else if (isPiecesContainer) {\\n            // if being placed back in the pieces container, going back to absolute and resetting bkgrnd & font color\\n            dragItem.style.position = \\\"absolute\\\";\\n            dragItem.style.backgroundColor = \\\"rgb(115, 167, 167)\\\";\\n            dragItem.style.color = \\\"rgb(15, 21, 21)\\\";\\n        }\\n        // now the actual placement occurs\\n        e.preventDefault();\\n        e.target.appendChild(dragItem);\\n        let piecesCont = round === 1 ? document.getElementById(\\\"piecesCont1\\\") : document.getElementById(\\\"piecesCont2\\\");\\n        piecesLeft = checkPiecesLeft(piecesCont);\\n    }\\n};\\nconst allowDrop = (e) => {\\n    e.preventDefault();\\n};\\nconst handleDrag = (e) => {\\n    e.target.style.cursor = \\\"grabbing\\\";\\n};\\nconst checkIsMatch = (target, dragItem) => {\\n    if (hasClass(target, \\\"col1\\\") && hasClass(dragItem, \\\"col1\\\")) {\\n        return true;\\n    }\\n    else if (hasClass(target, \\\"col2\\\") && hasClass(dragItem, \\\"col2\\\")) {\\n        return true;\\n    }\\n    else if (hasClass(target, \\\"col3\\\") && hasClass(dragItem, \\\"col3\\\")) {\\n        return true;\\n    }\\n    else if (hasClass(target, \\\"col4\\\") && hasClass(dragItem, \\\"col4\\\")) {\\n        return true;\\n    }\\n    else if (hasClass(target, \\\"col5\\\") && hasClass(dragItem, \\\"col5\\\")) {\\n        return true;\\n    }\\n    else {\\n        return false;\\n    }\\n};\\nconst hasClass = (el, clss) => {\\n    return el.classList.contains(clss);\\n};\\nconst checkPiecesLeft = (el) => {\\n    const numChildNodes = el.childNodes.length;\\n    return numChildNodes;\\n};\\n</script>\\n\\n<style>\\n\\t@import url(\\\"https://fonts.googleapis.com/css2?family=Spartan:wght@100;200;300;400;500&display=swap\\\");\\n\\t* {\\n\\t\\tfont-family: \\\"Spartan\\\", sans-serif;\\n\\t}\\n\\t.game-page {\\n\\t\\theight: 650px;\\n\\t\\twidth: 100%;\\n\\t\\tmin-width: 830px;\\n\\t\\tmax-width: 1500px;\\n\\t\\tmargin: auto;\\n\\t\\tbox-sizing: border-box;\\n\\t}\\n\\t.game-bar {\\n\\t\\tdisplay: flex;\\n\\t\\tjustify-content: space-between;\\n\\t\\tmargin: 0.75rem;\\n\\t}\\n\\t.pieces-container {\\n\\t\\theight: 145px;\\n\\t\\t/* width: 25%; */\\n\\t\\twidth: 300px;\\n\\t\\tdisplay: flex;\\n\\t\\tjustify-content: flex-end;\\n\\t\\talign-items: flex-start;\\n\\t\\tposition: relative;\\n\\t}\\n\\t.pieces {\\n\\t\\tdisplay: flex;\\n\\t\\tjustify-content: center;\\n\\t\\ttext-align: center;\\n\\t\\talign-items: top;\\n\\t\\theight: 110px;\\n\\t\\tmax-width: 90%;\\n\\t\\tposition: absolute;\\n\\t\\toverflow: hidden;\\n\\t\\t/* padding-top: 10px; */\\n\\t\\tpadding: 5% 5% 0 5%;\\n\\t\\tbackground-color: #d8d8d8;\\n\\t\\tcolor: #314541;\\n\\t\\tline-height: 1.15rem;\\n\\t\\tborder-radius: 2px;\\n\\t\\tcursor: grab;\\n\\t\\tbox-shadow: 1px 2px 3px black;\\n\\t\\tvisibility: hidden;\\n\\t}\\n\\t/* only show first div in container helps prevent\\n  stacking up of box-shadow\\n  NOTE: make sure to have any dropped divs in targets visible */\\n\\t.pieces-container div:first-of-type {\\n\\t\\tvisibility: visible;\\n\\t}\\n\\t.pieces::-webkit-scrollbar {\\n\\t\\tdisplay: none;\\n\\t}\\n\\t.pieces.text {\\n\\t\\toverflow: auto;\\n\\t}\\n\\t.img-container {\\n\\t\\tmax-height: 130px;\\n\\t\\tpadding: 1px;\\n\\t\\tdisplay: flex;\\n\\t\\tjustify-content: center;\\n\\t\\tbox-shadow: 1px 2px 3px black;\\n\\t\\talign-items: center;\\n\\t}\\n\\t.img-piece {\\n\\t\\t/* max-height: 120px; */\\n\\t\\tmax-height: 90%;\\n\\t\\t/* height: auto; */\\n\\t\\t/* max-width: 100%; */\\n\\t\\tmin-width: 75px;\\n\\t\\tmax-width: 100%;\\n\\t\\toverflow: hidden;\\n\\t\\tmargin: 0 5px;\\n\\t\\t/* width: 90%; */\\n\\t}\\n\\t.score-container {\\n\\t\\tdisplay: flex;\\n\\t\\tflex-direction: column;\\n\\t\\tjustify-content: flex-start;\\n\\t}\\n\\t.score-item {\\n\\t\\tmargin-bottom: 0.6rem;\\n\\t}\\n\\t.round-label {\\n\\t\\tdisplay: flex;\\n\\t\\tjustify-content: center;\\n\\t\\talign-items: center;\\n\\t\\theight: 114px;\\n\\t\\tfont-size: 3rem;\\n\\t}\\n\\t.target-container {\\n\\t\\theight: 70%;\\n\\t\\twidth: 100%;\\n\\t\\tdisplay: flex;\\n\\t\\tflex-direction: row;\\n\\t\\tjustify-content: space-evenly;\\n\\t\\tflex-wrap: wrap;\\n\\t\\tbox-sizing: border-box;\\n\\t\\tmargin: 0;\\n\\t}\\n\\t.target {\\n\\t\\tdisplay: flex;\\n\\t\\tjustify-content: center;\\n\\t\\talign-items: center;\\n\\t\\ttext-align: center;\\n\\t\\theight: 130px;\\n\\t\\twidth: 100%;\\n\\t\\tmargin: 0;\\n\\t\\tborder-radius: 2px;\\n\\t\\tbox-sizing: border-box;\\n\\t}\\n\\t.column {\\n\\t\\twidth: 19%;\\n\\t\\tmax-height: 100%;\\n\\t\\tdisplay: flex;\\n\\t\\tflex-direction: column;\\n\\t\\tjustify-content: space-evenly;\\n\\t\\talign-content: center;\\n\\t\\ttext-align: center;\\n\\t\\tmargin: 0 0.25rem;\\n\\t\\tmargin: 0;\\n\\t\\tbox-sizing: border-box;\\n\\t}\\n\\t.c1 .target,\\n\\t.c3 .target,\\n\\t.c5 .target {\\n\\t\\tbackground-color: #0d223f;\\n\\t\\tcolor: #77bc43;\\n\\t}\\n\\t.c2 .target,\\n\\t.c4 .target {\\n\\t\\tbackground-color: #77bc43;\\n\\t\\tcolor: #0d223f;\\n\\t}\\n\\t.colHeading {\\n\\t\\tdisplay: flex;\\n\\t\\tjustify-content: center;\\n\\t\\talign-items: center;\\n\\t\\tmargin: 0;\\n\\t\\theight: 35px;\\n\\t\\tfont-size: 1rem;\\n\\t}\\n\\t.c1 .colHeading,\\n\\t.c3 .colHeading,\\n\\t.c5 .colHeading {\\n\\t\\tbackground-color: #77bc43;\\n\\t}\\n\\t.c2 .colHeading,\\n\\t.c4 .colHeading {\\n\\t\\tbackground-color: #0d223f;\\n\\t\\tcolor: #77bc43;\\n\\t}\\n\\t@media screen and (max-width: 1120px) {\\n\\t\\t.pieces-container {\\n\\t\\t\\tmargin-left: 8px;\\n\\t\\t}\\n\\t}\\n</style>\\n\\n<svelte:head>\\n\\t<title>{title}</title>\\n</svelte:head>\\n\\n<div class=\\\"game-page\\\" on:drop={dropItem} on:dragover={allowDrop}>\\n\\t<div class=\\\"target-container\\\">\\n\\t\\t<div class=\\\"column c1\\\">\\n\\t\\t\\t<h3 class=\\\"colHeading\\\">{colHeadings.col1Heading}</h3>\\n\\t\\t\\t<div id=\\\"t1\\\" class=\\\"target col1\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t2\\\" class=\\\"target col1\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t3\\\" class=\\\"target col1\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t</div>\\n\\t\\t<div class=\\\"column c2\\\">\\n\\t\\t\\t<h3 class=\\\"colHeading\\\">{colHeadings.col2Heading}</h3>\\n\\t\\t\\t<div id=\\\"t4\\\" class=\\\"target col2\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t5\\\" class=\\\"target col2\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t6\\\" class=\\\"target col2\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t</div>\\n\\t\\t<div class=\\\"column c3\\\">\\n\\t\\t\\t<h3 class=\\\"colHeading\\\">{colHeadings.col3Heading}</h3>\\n\\t\\t\\t<div id=\\\"t7\\\" class=\\\"target col3\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t8\\\" class=\\\"target col3\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t9\\\" class=\\\"target col3\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t</div>\\n\\t\\t<div class=\\\"column c4\\\">\\n\\t\\t\\t<h3 class=\\\"colHeading\\\">{colHeadings.col4Heading}</h3>\\n\\t\\t\\t<div id=\\\"t10\\\" class=\\\"target col4\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t11\\\" class=\\\"target col4\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t12\\\" class=\\\"target col4\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t</div>\\n\\t\\t<div class=\\\"column c5\\\">\\n\\t\\t\\t<h3 class=\\\"colHeading\\\">{colHeadings.col5Heading}</h3>\\n\\t\\t\\t<div id=\\\"t13\\\" class=\\\"target col5\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t14\\\" class=\\\"target col5\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t\\t<div id=\\\"t15\\\" class=\\\"target col5\\\" on:drop={dropItem} on:dragover={allowDrop} />\\n\\t\\t</div>\\n\\t</div>\\n\\n\\t<div class=\\\"game-bar\\\">\\n\\t\\t<div out:fade={{ duration: 10 }} class=\\\"score-container\\\">\\n\\t\\t\\t<div class=\\\"score-item\\\">total correct: {$dnd_store.totalCorrect}</div>\\n\\t\\t\\t<div class=\\\"score-item\\\">total wrong: {$dnd_store.totalWrong}</div>\\n\\t\\t\\t<div class=\\\"score-item\\\">round {round} correct: {round === 1 ? $dnd_store.round1Correct : $dnd_store.round2Correct}</div>\\n\\t\\t\\t<div class=\\\"score-item\\\">round {round} wrong: {round === 1 ? $dnd_store.round1Wrong : $dnd_store.round2Wrong}</div>\\n\\t\\t</div>\\n\\n\\t\\t<div class=\\\"round-label\\\" out:fade={{ duration: 10 }}>Round {round}</div>\\n\\n\\t\\t<div class=\\\"pieces-container\\\" id={round === 1 ? 'piecesCont1' : 'piecesCont2'} on:drop={dropItem} on:dragover={allowDrop}>\\n\\t\\t\\t{#each piecesArray as piece, i}\\n\\t\\t\\t\\t{#if piece.definition || piece.hint}\\n\\t\\t\\t\\t\\t<div in:fade id={piece.id} class={`pieces ${piece.col} text`} draggable=\\\"true\\\" on:dragstart={dragItem}>\\n\\t\\t\\t\\t\\t\\t{piece.definition ? piece.definition : piece.hint}\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t{:else}\\n\\t\\t\\t\\t\\t<div in:fade id={piece.id} class={`pieces ${piece.col} img-container`} draggable=\\\"true\\\">\\n\\t\\t\\t\\t\\t\\t<img class=\\\"img-piece\\\" src={piece.pic} alt={piece.alt} on:dragstart={dragItem} on:drag={handleDrag} />\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t{/if}\\n\\t\\t\\t{/each}\\n\\t\\t</div>\\n\\t</div>\\n</div>\\n\"],\"names\":[],\"mappings\":\"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\"}"
+};
+
+const GameBoard = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	let $dnd_store;
+	let { colHeadings } = $$props;
+	let { pieces } = $$props;
+	let { round } = $$props;
+	let { title } = $$props;
+	let { dnd_store } = $$props;
+	$dnd_store = get_store_value(dnd_store);
+	let piecesArray = [];
+	const dispatch = createEventDispatcher();
+
+	onMount(() => {
+		piecesArray = [...pieces];
+		piecesArray = shuffleArray(piecesArray);
+
+		// firstLoad starts as true, and is immediately turned false
+		// this will affect score reset onMount so that round 2 is not reset
+		// but reset will happen when coming back after game is over
+		dnd_store.changeFirstLoad(false);
+	});
+
+	const shuffleArray = array => {
+		// copy array to manipulate
+		let arrayCopy = [...array];
+
+		let mixedArray = [];
+
+		// loop through copy until no elements left
+		while (arrayCopy.length > 0) {
+			let randNum = Math.floor(Math.random() * arrayCopy.length);
+
+			// add removed elements to mixedArray as looping occurs
+			mixedArray.push(arrayCopy.splice(randNum, 1)[0]);
+		}
+
+		return mixedArray;
+	};
+
+	if ($$props.colHeadings === void 0 && $$bindings.colHeadings && colHeadings !== void 0) $$bindings.colHeadings(colHeadings);
+	if ($$props.pieces === void 0 && $$bindings.pieces && pieces !== void 0) $$bindings.pieces(pieces);
+	if ($$props.round === void 0 && $$bindings.round && round !== void 0) $$bindings.round(round);
+	if ($$props.title === void 0 && $$bindings.title && title !== void 0) $$bindings.title(title);
+	if ($$props.dnd_store === void 0 && $$bindings.dnd_store && dnd_store !== void 0) $$bindings.dnd_store(dnd_store);
+	$$result.css.add(css);
+	$dnd_store = get_store_value(dnd_store);
+
+	 {
+		{
+			if (!$dnd_store.firstLoad && round === 1) {
+				// reset only if game has been loaded and user is back to round 1
+				dnd_store.resetScores();
+			}
+		}
+	}
+
+	return `${($$result.head += `${($$result.title = `<title>${escape(title)}</title>`, "")}`, "")}
+
+<div class="${"game-page svelte-ctpe5c"}"><div class="${"target-container svelte-ctpe5c"}"><div class="${"column c1 svelte-ctpe5c"}"><h3 class="${"colHeading svelte-ctpe5c"}">${escape(colHeadings.col1Heading)}</h3>
+			<div id="${"t1"}" class="${"target col1 svelte-ctpe5c"}"></div>
+			<div id="${"t2"}" class="${"target col1 svelte-ctpe5c"}"></div>
+			<div id="${"t3"}" class="${"target col1 svelte-ctpe5c"}"></div></div>
+		<div class="${"column c2 svelte-ctpe5c"}"><h3 class="${"colHeading svelte-ctpe5c"}">${escape(colHeadings.col2Heading)}</h3>
+			<div id="${"t4"}" class="${"target col2 svelte-ctpe5c"}"></div>
+			<div id="${"t5"}" class="${"target col2 svelte-ctpe5c"}"></div>
+			<div id="${"t6"}" class="${"target col2 svelte-ctpe5c"}"></div></div>
+		<div class="${"column c3 svelte-ctpe5c"}"><h3 class="${"colHeading svelte-ctpe5c"}">${escape(colHeadings.col3Heading)}</h3>
+			<div id="${"t7"}" class="${"target col3 svelte-ctpe5c"}"></div>
+			<div id="${"t8"}" class="${"target col3 svelte-ctpe5c"}"></div>
+			<div id="${"t9"}" class="${"target col3 svelte-ctpe5c"}"></div></div>
+		<div class="${"column c4 svelte-ctpe5c"}"><h3 class="${"colHeading svelte-ctpe5c"}">${escape(colHeadings.col4Heading)}</h3>
+			<div id="${"t10"}" class="${"target col4 svelte-ctpe5c"}"></div>
+			<div id="${"t11"}" class="${"target col4 svelte-ctpe5c"}"></div>
+			<div id="${"t12"}" class="${"target col4 svelte-ctpe5c"}"></div></div>
+		<div class="${"column c5 svelte-ctpe5c"}"><h3 class="${"colHeading svelte-ctpe5c"}">${escape(colHeadings.col5Heading)}</h3>
+			<div id="${"t13"}" class="${"target col5 svelte-ctpe5c"}"></div>
+			<div id="${"t14"}" class="${"target col5 svelte-ctpe5c"}"></div>
+			<div id="${"t15"}" class="${"target col5 svelte-ctpe5c"}"></div></div></div>
+
+	<div class="${"game-bar svelte-ctpe5c"}"><div class="${"score-container svelte-ctpe5c"}"><div class="${"score-item svelte-ctpe5c"}">total correct: ${escape($dnd_store.totalCorrect)}</div>
+			<div class="${"score-item svelte-ctpe5c"}">total wrong: ${escape($dnd_store.totalWrong)}</div>
+			<div class="${"score-item svelte-ctpe5c"}">round ${escape(round)} correct: ${escape(round === 1
+	? $dnd_store.round1Correct
+	: $dnd_store.round2Correct)}</div>
+			<div class="${"score-item svelte-ctpe5c"}">round ${escape(round)} wrong: ${escape(round === 1
+	? $dnd_store.round1Wrong
+	: $dnd_store.round2Wrong)}</div></div>
+
+		<div class="${"round-label svelte-ctpe5c"}">Round ${escape(round)}</div>
+
+		<div class="${"pieces-container svelte-ctpe5c"}"${add_attribute("id", round === 1 ? "piecesCont1" : "piecesCont2", 0)}>${each(piecesArray, (piece, i) => `${piece.definition || piece.hint
+	? `<div${add_attribute("id", piece.id, 0)} class="${escape(null_to_empty(`pieces ${piece.col} text`)) + " svelte-ctpe5c"}" draggable="${"true"}">${escape(piece.definition ? piece.definition : piece.hint)}
+					</div>`
+	: `<div${add_attribute("id", piece.id, 0)} class="${escape(null_to_empty(`pieces ${piece.col} img-container`)) + " svelte-ctpe5c"}" draggable="${"true"}"><img class="${"img-piece svelte-ctpe5c"}"${add_attribute("src", piece.pic, 0)}${add_attribute("alt", piece.alt, 0)}>
+					</div>`}`)}</div></div></div>`;
+});
+
+/* src/components/GameOver.svelte generated by Svelte v3.29.0 */
+
+const css$1 = {
+	code: ".game-over_container.svelte-1g63pp{width:100%;height:50vh;display:flex;flex-wrap:wrap;justify-content:center;align-items:center}.title.svelte-1g63pp{width:100%;text-align:center}.score-content.svelte-1g63pp{width:100%;text-align:center}",
+	map: "{\"version\":3,\"file\":\"GameOver.svelte\",\"sources\":[\"GameOver.svelte\"],\"sourcesContent\":[\"<script lang=\\\"ts\\\">export let totalCorrect;\\nexport let totalWrong;\\nlet finalScore;\\n$: {\\n    let calcScore = Math.round(((30 - totalWrong) / 30) * 100);\\n    finalScore = calcScore >= 0 ? calcScore : 0;\\n}\\n</script>\\n\\n<style>\\n\\t.game-over_container {\\n\\t\\twidth: 100%;\\n\\t\\theight: 50vh;\\n\\t\\tdisplay: flex;\\n\\t\\tflex-wrap: wrap;\\n\\t\\tjustify-content: center;\\n\\t\\talign-items: center;\\n\\t}\\n\\t.title {\\n\\t\\twidth: 100%;\\n\\t\\ttext-align: center;\\n\\t}\\n\\t.score-content {\\n\\t\\twidth: 100%;\\n\\t\\ttext-align: center;\\n\\t}\\n</style>\\n\\n<div class=\\\"game-over_container\\\">\\n\\t<h1 class=\\\"title\\\">Game Over</h1>\\n\\t<h4 class=\\\"score-content\\\">Total Correct: {totalCorrect}</h4>\\n\\t<h4 class=\\\"score-content\\\">Total Wrong: {totalWrong}</h4>\\n\\t<h4 class=\\\"score-content\\\">Final Score: {finalScore}</h4>\\n</div>\\n\"],\"names\":[],\"mappings\":\"AAUC,oBAAoB,cAAC,CAAC,AACrB,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CACZ,OAAO,CAAE,IAAI,CACb,SAAS,CAAE,IAAI,CACf,eAAe,CAAE,MAAM,CACvB,WAAW,CAAE,MAAM,AACpB,CAAC,AACD,MAAM,cAAC,CAAC,AACP,KAAK,CAAE,IAAI,CACX,UAAU,CAAE,MAAM,AACnB,CAAC,AACD,cAAc,cAAC,CAAC,AACf,KAAK,CAAE,IAAI,CACX,UAAU,CAAE,MAAM,AACnB,CAAC\"}"
+};
+
+const GameOver = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	let { totalCorrect } = $$props;
+	let { totalWrong } = $$props;
+	let finalScore;
+	if ($$props.totalCorrect === void 0 && $$bindings.totalCorrect && totalCorrect !== void 0) $$bindings.totalCorrect(totalCorrect);
+	if ($$props.totalWrong === void 0 && $$bindings.totalWrong && totalWrong !== void 0) $$bindings.totalWrong(totalWrong);
+	$$result.css.add(css$1);
+
+	 {
+		{
+			let calcScore = Math.round((30 - totalWrong) / 30 * 100);
+			finalScore = calcScore >= 0 ? calcScore : 0;
+		}
+	}
+
+	return `<div class="${"game-over_container svelte-1g63pp"}"><h1 class="${"title svelte-1g63pp"}">Game Over</h1>
+	<h4 class="${"score-content svelte-1g63pp"}">Total Correct: ${escape(totalCorrect)}</h4>
+	<h4 class="${"score-content svelte-1g63pp"}">Total Wrong: ${escape(totalWrong)}</h4>
+	<h4 class="${"score-content svelte-1g63pp"}">Final Score: ${escape(finalScore)}</h4></div>`;
+});
+
+/* src/components/DnD.svelte generated by Svelte v3.29.0 */
+
+const DnD = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	let $dnd_store = get_store_value(dnd_store);
+	let { dnd_content } = $$props;
+
+	// TS/Svelte requires this pattern for reactive declarations (https://blog.scottlogic.com/2020/07/24/svelte-ts.html)
+	let updatedRound;
+
+	let colHeadings;
+
+	if ($$props.dnd_content === void 0 && $$bindings.dnd_content && dnd_content !== void 0) $$bindings.dnd_content(dnd_content);
+	let pieces;
+	let round;
+	updatedRound = 1;
+
+	colHeadings = updatedRound === 1
+	? dnd_content.dndgame1
+	: dnd_content.dndgame2;
+
+	pieces = updatedRound === 1
+	? dnd_content.pieces1
+	: dnd_content.pieces2;
+
+	round = updatedRound;
+
+	return `${updatedRound === 1
+	? `<div>${validate_component(GameBoard, "GameBoard").$$render(
+			$$result,
+			{
+				dnd_store,
+				title: dnd_content.title,
+				colHeadings,
+				pieces,
+				round
+			},
+			{},
+			{}
+		)}</div>`
+	: `${updatedRound === 2
+		? `<div>${validate_component(GameBoard, "GameBoard").$$render(
+				$$result,
+				{
+					dnd_store,
+					title: dnd_content.title,
+					colHeadings,
+					pieces,
+					round
+				},
+				{},
+				{}
+			)}</div>`
+		: `${updatedRound === 3
+			? `<div>${validate_component(GameOver, "GameOver").$$render(
+					$$result,
+					{
+						totalCorrect: $dnd_store.totalCorrect,
+						totalWrong: $dnd_store.totalWrong
+					},
+					{},
+					{}
+				)}</div>`
+			: ``}`}`}`;
+});
+
+/* src/routes/dndgame/[dnd_unit].svelte generated by Svelte v3.29.0 */
+
+var __awaiter = undefined && undefined.__awaiter || function (thisArg, _arguments, P, generator) {
+	function adopt(value) {
+		return value instanceof P
+		? value
+		: new P(function (resolve) {
+					resolve(value);
+				});
+	}
+
+	return new (P || (P = Promise))(function (resolve, reject) {
+			function fulfilled(value) {
+				try {
+					step(generator.next(value));
+				} catch(e) {
+					reject(e);
+				}
+			}
+
+			function rejected(value) {
+				try {
+					step(generator["throw"](value));
+				} catch(e) {
+					reject(e);
+				}
+			}
+
+			function step(result) {
+				result.done
+				? resolve(result.value)
+				: adopt(result.value).then(fulfilled, rejected);
+			}
+
+			step((generator = generator.apply(thisArg, _arguments || [])).next());
+		});
+};
+
+function preload(page, session) {
+	return __awaiter(this, void 0, void 0, function* () {
+		const { dnd_unit } = page.params;
+		const res = yield this.fetch(`data/${dnd_unit}.json`);
+		const dnd_content = yield res.json();
+		return { dnd_content };
+	});
+}
+
+const U5Bdnd_unitu5D = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	let { dnd_content } = $$props; // this gets defined in script module above
+	if ($$props.dnd_content === void 0 && $$bindings.dnd_content && dnd_content !== void 0) $$bindings.dnd_content(dnd_content);
+
+	return `${($$result.head += `${($$result.title = `<title>${escape(dnd_content.title)}</title>`, "")}`, "")}
+
+${validate_component(DnD, "DnD").$$render($$result, { dnd_content }, {}, {})}`;
+});
+
+var component_2 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    'default': U5Bdnd_unitu5D,
+    preload: preload
+});
+
+/* src/routes/games.svelte generated by Svelte v3.29.0 */
+
+const css$2 = {
+	code: ".game-link.svelte-1r7g89t{text-decoration:none}",
+	map: "{\"version\":3,\"file\":\"games.svelte\",\"sources\":[\"games.svelte\"],\"sourcesContent\":[\"<script>\\n\\timport { fade } from \\\"svelte/transition\\\";\\n</script>\\n\\n<style>\\n\\t.game-link {\\n\\t\\ttext-decoration: none;\\n\\t}\\n</style>\\n\\n<h1 in:fade={{ y: 200, duration: 300, delay: 500 }}><a class=\\\"game-link\\\" href=\\\"/dndgame/unit1_1\\\">Unit 1.1 Game</a></h1>\\n<h1 in:fade={{ y: 200, duration: 300, delay: 500 }}><a class=\\\"game-link\\\" href=\\\"/dndgame/unit1_2\\\">Unit 1.2 Game</a></h1>\\n<h1 in:fade={{ y: 200, duration: 300, delay: 500 }}><a class=\\\"game-link\\\" href=\\\"/dndgame/unit1_3\\\">Unit 1.3 Game</a></h1>\\n\"],\"names\":[],\"mappings\":\"AAKC,UAAU,eAAC,CAAC,AACX,eAAe,CAAE,IAAI,AACtB,CAAC\"}"
+};
+
+const Games = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	$$result.css.add(css$2);
+
+	return `<h1><a class="${"game-link svelte-1r7g89t"}" href="${"/dndgame/unit1_1"}">Unit 1.1 Game</a></h1>
+<h1><a class="${"game-link svelte-1r7g89t"}" href="${"/dndgame/unit1_2"}">Unit 1.2 Game</a></h1>
+<h1><a class="${"game-link svelte-1r7g89t"}" href="${"/dndgame/unit1_3"}">Unit 1.3 Game</a></h1>`;
+});
+
+var component_3 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    'default': Games
+});
+
+/* src/components/UnitPage.svelte generated by Svelte v3.29.0 */
+
+const css$3 = {
+	code: ".pageTitle.svelte-x6xgnn{text-align:center}.parImg-container.svelte-x6xgnn{display:flex;width:100%;justify-content:center;align-items:center}.parImg.svelte-x6xgnn{width:75%}.content.svelte-x6xgnn{display:flex}",
+	map: "{\"version\":3,\"file\":\"UnitPage.svelte\",\"sources\":[\"UnitPage.svelte\"],\"sourcesContent\":[\"<script context=\\\"module\\\">\\n\\texport async function preload(page, session) {\\n\\t\\tconst { unit } = page.params;\\n\\t\\tconst res = await this.fetch(`data/${unit}.json`);\\n\\t\\tconst unit_content = await res.json();\\n\\t\\treturn { unit_content };\\n\\t}\\n</script>\\n\\n<script>\\n\\texport let unit_content;\\n\\t// sorts alphabetically so I can render paragraphs in order and only render\\n\\t// the number of paragraphs needed for the available content\\n\\tlet unitItems = Object.entries(unit_content).sort((a, b) => a[0].localeCompare(b[0]));\\n</script>\\n\\n<style>\\n\\t.pageTitle {\\n\\t\\ttext-align: center;\\n\\t}\\n\\t.parImg-container {\\n\\t\\tdisplay: flex;\\n\\t\\twidth: 100%;\\n\\t\\tjustify-content: center;\\n\\t\\talign-items: center;\\n\\t}\\n\\t.parImg {\\n\\t\\twidth: 75%;\\n\\t}\\n\\t.content {\\n\\t\\tdisplay: flex;\\n\\t}\\n</style>\\n\\n<svelte:head>\\n\\t<title>{unit_content.title}</title>\\n</svelte:head>\\n\\n<h1 class=\\\"pageTitle\\\">{unit_content.title}</h1>\\n\\n<!-- loop through array items made from json file -->\\n{#each unitItems as item}\\n\\t<!-- check if item is paragraph material and display paragraph content w/ image if it has one -->\\n\\t{#if item[0].indexOf('par') > -1}\\n\\t\\t<!-- check if paragraph material contains an image and display that image -->\\n\\t\\t{#if item[1].pic}\\n\\t\\t\\t<div class=\\\"parImg-container\\\"><img class=\\\"parImg\\\" src={item[1].pic.src} alt={item[1].pic.alt} /></div>\\n\\t\\t{/if}\\n\\t\\t<p class=\\\"content\\\">{item[1].content}</p>\\n\\t{/if}\\n{/each}\\n<body>\\n\\t<slot />\\n</body>\\n\"],\"names\":[],\"mappings\":\"AAiBC,UAAU,cAAC,CAAC,AACX,UAAU,CAAE,MAAM,AACnB,CAAC,AACD,iBAAiB,cAAC,CAAC,AAClB,OAAO,CAAE,IAAI,CACb,KAAK,CAAE,IAAI,CACX,eAAe,CAAE,MAAM,CACvB,WAAW,CAAE,MAAM,AACpB,CAAC,AACD,OAAO,cAAC,CAAC,AACR,KAAK,CAAE,GAAG,AACX,CAAC,AACD,QAAQ,cAAC,CAAC,AACT,OAAO,CAAE,IAAI,AACd,CAAC\"}"
+};
+
+const UnitPage = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	let { unit_content } = $$props;
+
+	// sorts alphabetically so I can render paragraphs in order and only render
+	// the number of paragraphs needed for the available content
+	let unitItems = Object.entries(unit_content).sort((a, b) => a[0].localeCompare(b[0]));
+
+	if ($$props.unit_content === void 0 && $$bindings.unit_content && unit_content !== void 0) $$bindings.unit_content(unit_content);
+	$$result.css.add(css$3);
+
+	return `${($$result.head += `${($$result.title = `<title>${escape(unit_content.title)}</title>`, "")}`, "")}
+
+<h1 class="${"pageTitle svelte-x6xgnn"}">${escape(unit_content.title)}</h1>
+
+
+${each(unitItems, item => `
+	${item[0].indexOf("par") > -1
+	? `
+		${item[1].pic
+		? `<div class="${"parImg-container svelte-x6xgnn"}"><img class="${"parImg svelte-x6xgnn"}"${add_attribute("src", item[1].pic.src, 0)}${add_attribute("alt", item[1].pic.alt, 0)}></div>`
+		: ``}
+		<p class="${"content svelte-x6xgnn"}">${escape(item[1].content)}</p>`
+	: ``}`)}
+<body>${slots.default ? slots.default({}) : ``}</body>`;
+});
+
+/* src/routes/[unit].svelte generated by Svelte v3.29.0 */
+
+async function preload$1(page, session) {
+	const { unit } = page.params;
+	const res = await this.fetch(`data/${unit}.json`);
+	const unit_content = await res.json();
+	return { unit_content };
+}
+
+const U5Bunitu5D = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	let { unit_content } = $$props;
+	if ($$props.unit_content === void 0 && $$bindings.unit_content && unit_content !== void 0) $$bindings.unit_content(unit_content);
+	return `${validate_component(UnitPage, "Unitpage").$$render($$result, { unit_content }, {}, {})}`;
+});
+
+var component_4 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    'default': U5Bunitu5D,
+    preload: preload$1
+});
+
+/* src/components/Nav.svelte generated by Svelte v3.29.0 */
+
+const css$4 = {
+	code: "nav.svelte-169g52k{border-bottom:1px solid rgba(255, 62, 0, 0.1);font-weight:300;padding:0 1em}ul.svelte-169g52k{margin:0;padding:0}ul.svelte-169g52k::after{content:\"\";display:block;clear:both}li.svelte-169g52k{display:block;float:left}a.svelte-169g52k{text-decoration:none;padding:1em 0.5em;display:block}",
+	map: "{\"version\":3,\"file\":\"Nav.svelte\",\"sources\":[\"Nav.svelte\"],\"sourcesContent\":[\"<script>\\n</script>\\n\\n<style>\\n\\tnav {\\n\\t\\tborder-bottom: 1px solid rgba(255, 62, 0, 0.1);\\n\\t\\tfont-weight: 300;\\n\\t\\tpadding: 0 1em;\\n\\t}\\n\\tul {\\n\\t\\tmargin: 0;\\n\\t\\tpadding: 0;\\n\\t}\\n\\t/* clearfix */\\n\\tul::after {\\n\\t\\tcontent: \\\"\\\";\\n\\t\\tdisplay: block;\\n\\t\\tclear: both;\\n\\t}\\n\\tli {\\n\\t\\tdisplay: block;\\n\\t\\tfloat: left;\\n\\t}\\n\\ta {\\n\\t\\ttext-decoration: none;\\n\\t\\tpadding: 1em 0.5em;\\n\\t\\tdisplay: block;\\n\\t}\\n</style>\\n\\n<nav>\\n\\t<ul>\\n\\t\\t<li><a href=\\\".\\\">home</a></li>\\n\\t\\t<li><a href=\\\"content\\\">content</a></li>\\n\\t\\t<li><a href=\\\"games\\\">games</a></li>\\n\\t\\t<li><a href=\\\"vocabulary\\\">vocabulary</a></li>\\n\\t</ul>\\n</nav>\\n\"],\"names\":[],\"mappings\":\"AAIC,GAAG,eAAC,CAAC,AACJ,aAAa,CAAE,GAAG,CAAC,KAAK,CAAC,KAAK,GAAG,CAAC,CAAC,EAAE,CAAC,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,CAC9C,WAAW,CAAE,GAAG,CAChB,OAAO,CAAE,CAAC,CAAC,GAAG,AACf,CAAC,AACD,EAAE,eAAC,CAAC,AACH,MAAM,CAAE,CAAC,CACT,OAAO,CAAE,CAAC,AACX,CAAC,AAED,iBAAE,OAAO,AAAC,CAAC,AACV,OAAO,CAAE,EAAE,CACX,OAAO,CAAE,KAAK,CACd,KAAK,CAAE,IAAI,AACZ,CAAC,AACD,EAAE,eAAC,CAAC,AACH,OAAO,CAAE,KAAK,CACd,KAAK,CAAE,IAAI,AACZ,CAAC,AACD,CAAC,eAAC,CAAC,AACF,eAAe,CAAE,IAAI,CACrB,OAAO,CAAE,GAAG,CAAC,KAAK,CAClB,OAAO,CAAE,KAAK,AACf,CAAC\"}"
+};
+
+const Nav = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	$$result.css.add(css$4);
+
+	return `<nav class="${"svelte-169g52k"}"><ul class="${"svelte-169g52k"}"><li class="${"svelte-169g52k"}"><a href="${"."}" class="${"svelte-169g52k"}">home</a></li>
+		<li class="${"svelte-169g52k"}"><a href="${"content"}" class="${"svelte-169g52k"}">content</a></li>
+		<li class="${"svelte-169g52k"}"><a href="${"games"}" class="${"svelte-169g52k"}">games</a></li>
+		<li class="${"svelte-169g52k"}"><a href="${"vocabulary"}" class="${"svelte-169g52k"}">vocabulary</a></li></ul></nav>`;
+});
+
+/* src/routes/_layout.svelte generated by Svelte v3.29.0 */
+
+const css$5 = {
+	code: "main.svelte-z8h3uo{background-color:white;box-sizing:border-box}",
+	map: "{\"version\":3,\"file\":\"_layout.svelte\",\"sources\":[\"_layout.svelte\"],\"sourcesContent\":[\"<script>\\n\\timport Nav from \\\"../components/Nav.svelte\\\";\\n</script>\\n\\n<style>\\n\\tmain {\\n\\t\\t/* position: relative; */\\n\\t\\t/* max-width: 56em; */\\n\\t\\tbackground-color: white;\\n\\t\\t/* padding: 2em; */\\n\\t\\t/* margin: 0 auto; */\\n\\t\\tbox-sizing: border-box;\\n\\t}\\n</style>\\n\\n<Nav />\\n\\n<main>\\n\\t<slot />\\n</main>\\n\"],\"names\":[],\"mappings\":\"AAKC,IAAI,cAAC,CAAC,AAGL,gBAAgB,CAAE,KAAK,CAGvB,UAAU,CAAE,UAAU,AACvB,CAAC\"}"
+};
+
+const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	$$result.css.add(css$5);
+
+	return `${validate_component(Nav, "Nav").$$render($$result, {}, {}, {})}
+
+<main class="${"svelte-z8h3uo"}">${slots.default ? slots.default({}) : ``}</main>`;
+});
+
+var root_comp = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    'default': Layout
+});
+
+/* src/routes/_error.svelte generated by Svelte v3.29.0 */
+
+const css$6 = {
+	code: "h1.svelte-8od9u6,p.svelte-8od9u6{margin:0 auto}h1.svelte-8od9u6{font-size:2.8em;font-weight:700;margin:0 0 0.5em 0}p.svelte-8od9u6{margin:1em auto}@media(min-width: 480px){h1.svelte-8od9u6{font-size:4em}}",
+	map: "{\"version\":3,\"file\":\"_error.svelte\",\"sources\":[\"_error.svelte\"],\"sourcesContent\":[\"<script lang=\\\"ts\\\">export let status;\\nexport let error;\\nconst dev = undefined === 'development';\\n</script>\\n\\n<style>\\n\\th1, p {\\n\\t\\tmargin: 0 auto;\\n\\t}\\n\\n\\th1 {\\n\\t\\tfont-size: 2.8em;\\n\\t\\tfont-weight: 700;\\n\\t\\tmargin: 0 0 0.5em 0;\\n\\t}\\n\\n\\tp {\\n\\t\\tmargin: 1em auto;\\n\\t}\\n\\n\\t@media (min-width: 480px) {\\n\\t\\th1 {\\n\\t\\t\\tfont-size: 4em;\\n\\t\\t}\\n\\t}\\n</style>\\n\\n<svelte:head>\\n\\t<title>{status}</title>\\n</svelte:head>\\n\\n<h1>{status}</h1>\\n\\n<p>{error.message}</p>\\n\\n{#if dev && error.stack}\\n\\t<pre>{error.stack}</pre>\\n{/if}\\n\"],\"names\":[],\"mappings\":\"AAMC,gBAAE,CAAE,CAAC,cAAC,CAAC,AACN,MAAM,CAAE,CAAC,CAAC,IAAI,AACf,CAAC,AAED,EAAE,cAAC,CAAC,AACH,SAAS,CAAE,KAAK,CAChB,WAAW,CAAE,GAAG,CAChB,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,KAAK,CAAC,CAAC,AACpB,CAAC,AAED,CAAC,cAAC,CAAC,AACF,MAAM,CAAE,GAAG,CAAC,IAAI,AACjB,CAAC,AAED,MAAM,AAAC,YAAY,KAAK,CAAC,AAAC,CAAC,AAC1B,EAAE,cAAC,CAAC,AACH,SAAS,CAAE,GAAG,AACf,CAAC,AACF,CAAC\"}"
+};
+
+const Error$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+	let { status } = $$props;
+	let { error } = $$props;
+	if ($$props.status === void 0 && $$bindings.status && status !== void 0) $$bindings.status(status);
+	if ($$props.error === void 0 && $$bindings.error && error !== void 0) $$bindings.error(error);
+	$$result.css.add(css$6);
+
+	return `${($$result.head += `${($$result.title = `<title>${escape(status)}</title>`, "")}`, "")}
+
+<h1 class="${"svelte-8od9u6"}">${escape(status)}</h1>
+
+<p class="${"svelte-8od9u6"}">${escape(error.message)}</p>
+
+${ ``}`;
+});
+
+// This file is generated by Sapper — do not edit it!
+
+const d = decodeURIComponent;
+
+const manifest = {
+	server_routes: [
+		
+	],
+
+	pages: [
+		{
+			// index.svelte
+			pattern: /^\/$/,
+			parts: [
+				{ name: "index", file: "index.svelte", component: component_0 }
+			]
+		},
+
+		{
+			// content.svelte
+			pattern: /^\/content\/?$/,
+			parts: [
+				{ name: "content", file: "content.svelte", component: component_1 }
+			]
+		},
+
+		{
+			// dndgame/[dnd_unit].svelte
+			pattern: /^\/dndgame\/([^/]+?)\/?$/,
+			parts: [
+				null,
+				{ name: "dndgame_$dnd_unit", file: "dndgame/[dnd_unit].svelte", component: component_2, params: match => ({ dnd_unit: d(match[1]) }) }
+			]
+		},
+
+		{
+			// games.svelte
+			pattern: /^\/games\/?$/,
+			parts: [
+				{ name: "games", file: "games.svelte", component: component_3 }
+			]
+		},
+
+		{
+			// [unit].svelte
+			pattern: /^\/([^/]+?)\/?$/,
+			parts: [
+				{ name: "$unit", file: "[unit].svelte", component: component_4, params: match => ({ unit: d(match[1]) }) }
+			]
+		}
+	],
+
+	root_comp,
+	error: Error$1
+};
+
+const build_dir = "__sapper__/build";
 
 const CONTEXT_KEY = {};
 
