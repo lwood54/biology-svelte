@@ -3,8 +3,8 @@
 	import { fade } from "svelte/transition";
 	export let colHeadings;
 	export let pieces;
-	export let round;
-	export let title;
+	export let round: number;
+	export let title: string;
 	export let dnd_store;
 	let piecesArray = [];
 	let piecesLeft = 30;
