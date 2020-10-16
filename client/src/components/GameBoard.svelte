@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount, createEventDispatcher } from "svelte";
 	import { fade } from "svelte/transition";
 	export let colHeadings;
@@ -84,14 +84,17 @@
 					dragItem.style.color = "#e8e1e1"; // font color = light gray
 				} else if (checkIsMatch(e.target, dragItem)) {
 					dnd_store.incCorrectCount(round);
-					if (dragItem.childNodes[0].tagName === "IMG") {
-						dragItem.childNodes[0].setAttribute("draggable", false);
-						dragItem.childNodes[0].style.cursor = "no-drop";
-						dragItem.style.maxHeight = "110px";
+					if (dragItem.children.length >= 1) {
+						if (dragItem.children[0].tagName === "IMG") {
+							dragItem.children[0].setAttribute("draggable", "false");
+							// typecast because style property does not exist on type 'element'
+							(dragItem.children[0] as HTMLElement).style.cursor = "no-drop";
+							dragItem.style.maxHeight = "110px";
+						}
 					} else {
 						dragItem.style.overflow = "auto";
 					}
-					dragItem.setAttribute("draggable", false);
+					dragItem.setAttribute("draggable", "false");
 					dragItem.style.border = "none";
 					dragItem.style.userSelect = "none";
 					dragItem.style.boxShadow = "none";

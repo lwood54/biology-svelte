@@ -2,7 +2,7 @@
   "bundler": "rollup",
   "shimport": "2.0.4",
   "assets": {
-    "main": "client.9a894523.js"
+    "main": "client.caeb44f4.js"
   },
   "css": {
     "main": [
@@ -11,27 +11,27 @@
   },
   "dependencies": {
     "index.svelte": [
-      "index.4562a3b1.js",
+      "index.4aaec5a1.js",
       "inject_styles.5607aec6.js"
     ],
     "content.svelte": [
-      "content.696cba3a.js",
+      "content.eea25063.js",
       "inject_styles.5607aec6.js"
     ],
     "dndgame/[dnd_unit].svelte": [
-      "[dnd_unit].7e07b99c.js",
-      "index.4f250af7.js",
+      "[dnd_unit].5adc46e2.js",
+      "index.4b4b451d.js",
       "inject_styles.5607aec6.js",
       "[dnd_unit]-c91bcac7.css"
     ],
     "games.svelte": [
-      "games.98d87f3b.js",
-      "index.4f250af7.js",
+      "games.a647c46e.js",
+      "index.4b4b451d.js",
       "inject_styles.5607aec6.js",
       "games-efad3077.css"
     ],
     "[unit].svelte": [
-      "[unit].c8f8d067.js",
+      "[unit].3cf9d85d.js",
       "inject_styles.5607aec6.js",
       "[unit]-40239133.css"
     ]
