@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from "svelte";
 	import { fade } from "svelte/transition";
-	export let colHeadings;
+	import type { ColHeadings } from "../helpers/interfaces";
+	export let colHeadings: ColHeadings;
 	export let pieces;
 	export let round: number;
 	export let title: string;
