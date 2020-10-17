@@ -28,9 +28,10 @@ export interface Pieces extends DefCard, HintCard, PicCard {
 
   // TODO: fix this method of adding iterator, saying no next() method
   // unsure of correct implementation for this
-  // next(...args: []): DefCard | HintCard | PicCard;
-  // return(value: DefCard | HintCard | PicCard): DefCard | HintCard | PicCard;
-  // throw(e: any): any;
-  // [Symbol.iterator](): DefCard | HintCard | PicCard;
+  next(...args: []): DefCard | HintCard | PicCard;
+  return(value: DefCard | HintCard | PicCard): DefCard | HintCard | PicCard;
+  throw(e: any): any;
+  // [Symbol.iterator](): DefCard | HintCard | PicCard; // this does not work, says no next() method
+  [Symbol.iterator](): any; // this works, but is not ideal?
 };
 ////////
