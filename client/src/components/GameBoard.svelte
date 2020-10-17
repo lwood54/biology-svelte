@@ -1,15 +1,18 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from "svelte";
 	import { fade } from "svelte/transition";
-	import type { ColHeadings } from "../helpers/interfaces";
+	import type { ColHeadings, Pieces } from "../types/DnDTypes";
 	export let colHeadings: ColHeadings;
-	export let pieces;
+	export let pieces: Pieces;
 	export let round: number;
 	export let title: string;
 	export let dnd_store;
-	let piecesArray = [];
+
+	let piecesArray: Array<Pieces> = [];
 	let piecesLeft = 30;
+
 	const dispatch = createEventDispatcher();
+
 	$: if (piecesLeft <= 15) {
 		// if current round is 1, then change to 2, else change to 3
 		round = round === 1 ? 2 : 3;
@@ -22,6 +25,7 @@
 		}
 	}
 	onMount(() => {
+		// TODO: either fix this implimentation of loading data or add iterator in type
 		piecesArray = [...pieces];
 		piecesArray = shuffleArray(piecesArray);
 		// firstLoad starts as true, and is immediately turned false

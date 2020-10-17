@@ -1,7 +1,9 @@
 {
 		"extends": "@tsconfig/svelte/tsconfig.json",
 		"compilerOptions": {
-			"lib": ["DOM", "ES2017", "WebWorker"]
+      "lib": ["DOM", "ES2017", "WebWorker"],
+      "sourceMap": true,  /* Generates corresponding '.map' file. */
+      "noEmitOnError": true,      /* prevents TS from generating JS files if errors present*/
 		},
 		"include": ["src/**/*", "src/node_modules/**/*"],
 		"exclude": ["node_modules/*", "__sapper__/*", "static/*"]
