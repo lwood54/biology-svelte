@@ -35,3 +35,18 @@ export interface Pieces extends DefCard, HintCard, PicCard {
   [Symbol.iterator](): any; // this works, but is not ideal?
 };
 ////////
+// TODO: solve issue of TS not reading the methods defined below //
+// unusable as is...
+export interface DND_Store {
+  totalCorrect: number;
+  totalWrong: number;
+  round1Correct: number;
+  round1Wrong: number;
+  round2Correct: number;
+  round2Wrong: number;
+  firstLoad: boolean;
+  incCorrectCount: (round: number) => void;
+  incWrongCount: (round: number) => void;
+  resetScores: () => void;
+  changeFirstLoad: (newBool: boolean) => void;
+}

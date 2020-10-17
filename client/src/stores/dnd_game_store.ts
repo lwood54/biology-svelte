@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 
+// define initial scores
 const dnd_store_data = writable({
 	totalCorrect: 0,
 	totalWrong: 0,
@@ -10,11 +11,15 @@ const dnd_store_data = writable({
 	firstLoad: true,
 });
 
+// subscribe to store and create custom methods
 export const dnd_store = {
-	subscribe: dnd_store_data.subscribe,
-	incCorrectCount: (round) => {
+  subscribe: dnd_store_data.subscribe,
+  // increase correct count
+	incCorrectCount: (round: number) => {
 		dnd_store_data.update((data) => {
-			if (round === 1) {
+      if (round === 1) {
+        // if round 1, load all current data,
+        // and override round1Correct and totalCorrect with incremented value
 				const updatedData = {
 					...data,
 					round1Correct: data.round1Correct + 1,
@@ -22,6 +27,7 @@ export const dnd_store = {
 				};
 				return updatedData;
 			} else if (round === 2) {
+        // if round 2, load data and override round2Correct and totalCorrect
 				const updatedData = {
 					...data,
 					round2Correct: data.round2Correct + 1,
@@ -31,7 +37,7 @@ export const dnd_store = {
 			}
 		});
 	},
-	incWrongCount: (round) => {
+	incWrongCount: (round: number) => {
 		dnd_store_data.update((data) => {
 			if (round === 1) {
 				const updatedData = {
@@ -61,7 +67,7 @@ export const dnd_store = {
 			firstLoad: true,
 		});
 	},
-	changeFirstLoad: (newBool) => {
+	changeFirstLoad: (newBool: boolean) => {
 		dnd_store_data.update((data) => {
 			const updatedData = {
 				...data,
