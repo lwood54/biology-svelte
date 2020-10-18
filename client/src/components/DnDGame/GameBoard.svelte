@@ -16,21 +16,46 @@
   let piecesArray: Array<Pieces> = [];
 
   let piecesLeft = 30;
+  let roundCorrect = 0;
+  let roundWrong = 0;
   let modalOpen = false;
-  let wonRound = true; // TODO: fix bug that entire score resets if you go to round 2, but then fail round 2
+  // let wonRound = true; // TODO: fix bug that entire score resets if you go to round 2, but then fail round 2
   // desired outcome: you keep round 1 score, and only reset round 2. may require re-working
   // how total is tracked in store.
 
   const dispatch = createEventDispatcher();
 
-  $: if (piecesLeft <= 15) {
-    if (wonRound) {
-      round = round === 1 ? 2 : 3;
-      console.log("how many times does this run?");
-      dispatch("checkround", round);
-    } else {
-      modalOpen = true;
+  $: roundOver = piecesLeft <= 15;
+  $: wonRound = roundOver && roundWrong < 5;
+  $: if (roundCorrect >= 0) {
+    switch (round) {
+      case 1:
+        dnd_store.updateR1Correct(roundCorrect);
+        break;
+
+      case 2:
+        dnd_store.updateR2Correct(roundCorrect);
+        break;
     }
+    dnd_store.updateTotCorrect();
+  }
+  $: if (roundWrong >= 0) {
+    switch (round) {
+      case 1:
+        dnd_store.updateR1Wrong(roundWrong);
+        break;
+      case 2:
+        dnd_store.updateR2Wrong(roundWrong);
+        break;
+    }
+    dnd_store.updateTotWrong();
+  }
+
+  $: if (roundOver && wonRound) {
+    round = round === 1 ? 2 : 3;
+    dispatch("checkround", round);
+  } else if (roundOver) {
+    modalOpen = true;
   }
 
   $: {
@@ -43,6 +68,11 @@
     // TODO: either fix this implimentation of loading data or add iterator in type
     piecesArray = [...pieces];
     piecesArray = shuffleArray(piecesArray);
+    roundCorrect = 0;
+    roundWrong = 0;
+    if (round === 2) {
+      dnd_store.resetScores("round2");
+    }
     // firstLoad starts as true, and is immediately turned false
     // this will affect score reset onMount so that round 2 is not reset
     // but reset will happen when coming back after game is over
@@ -90,11 +120,13 @@
           dragItem.style.color = "#0d223f";
         }
         if (!checkIsMatch(e.target, dragItem)) {
-          dnd_store.incWrongCount(round);
+          // dnd_store.incWrongCount(round);
+          roundWrong += 1;
           e.target.style.backgroundColor = "#bf1d1d"; // bg = red
           dragItem.style.color = "#e8e1e1"; // font color = light gray
         } else if (checkIsMatch(e.target, dragItem)) {
-          dnd_store.incCorrectCount(round);
+          // dnd_store.incCorrectCount(round);
+          roundCorrect += 1;
           if (dragItem.children.length >= 1) {
             if (dragItem.children[0].tagName === "IMG") {
               dragItem.children[0].setAttribute("draggable", "false");
@@ -125,25 +157,21 @@
           ? document.getElementById("piecesCont1")
           : document.getElementById("piecesCont2");
       piecesLeft = checkPiecesLeft(piecesCont);
-      checkLoser();
+      // checkLoser();
     }
   };
 
-  const checkLoser = () => {
-    if (round === 1 && $dnd_store.round1Wrong >= 5) {
-      wonRound = false;
-    } else if (round === 2 && $dnd_store.round2Wrong >= 5) {
-      wonRound = false;
-    }
-  };
+  // const checkLoser = () => {
+  //   if (round === 1 && $dnd_store.round1Wrong >= 5) {
+  //     wonRound = false;
+  //   } else if (round === 2 && $dnd_store.round2Wrong >= 5) {
+  //     wonRound = false;
+  //   }
+  // };
 
   const handleDrag = (e: DragEvent) => {
-    (e.target as HTMLElement).style.cursor = "grabbing";
+    (e.target as HTMLElement).style.cursor = "move";
   };
-
-  // const allowDrop = (e) => {
-  //   e.preventDefault();
-  // };
 
   const checkIsMatch = (
     target: HTMLElement,
@@ -174,10 +202,16 @@
     clearTargets();
     piecesArray = [...pieces];
     piecesArray = shuffleArray(piecesArray);
-    dnd_store.resetScores();
+    roundCorrect = 0;
+    roundWrong = 0;
+    if (round === 1) {
+      dnd_store.resetScores();
+    } else if (round === 2) {
+      dnd_store.resetScores("round2");
+    }
     piecesLeft = 30;
     // resetting wonRound to initial state
-    wonRound = true;
+    // wonRound = true;
   };
 
   const clearTargets = () => {
@@ -386,7 +420,7 @@
     color: #314541;
     line-height: 1.15rem;
     border-radius: 2px;
-    cursor: grab;
+    cursor: move;
     box-shadow: 1px 2px 3px black;
     visibility: hidden;
   }
