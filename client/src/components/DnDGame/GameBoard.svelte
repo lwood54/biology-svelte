@@ -220,7 +220,6 @@
 {#if modalOpen}
   <Modal title="Alert" on:closeModal={toggleModal} />
 {/if}
-<button on:click={clearTargets}>clear targets</button>
 <div class="game-page" on:drop={dropItem} on:dragover|preventDefault>
   <div class="target-container">
     <div class="column c1">
