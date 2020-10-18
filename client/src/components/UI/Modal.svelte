@@ -18,11 +18,11 @@
         <slot />
     </div>
     <footer>
-        <slot name="footer">
-            <div class="modal-btn-container">
+        <div class="modal-btn-container">
+            <slot name="footer">
                 <button class="modal-button" on:click={closeModal}>Try Again</button>
-            </div>
-        </slot>
+            </slot>
+        </div>
     </footer>
 </div>
 
