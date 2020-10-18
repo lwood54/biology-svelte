@@ -8,7 +8,7 @@
 </script>
 
 <script>
-  import DnD from "../../components/DnD.svelte";
+  import DnD from "../../components/DnDGame/DnD.svelte";
   export let dnd_content; // this gets defined in script module above
 </script>
 

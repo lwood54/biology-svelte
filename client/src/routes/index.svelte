@@ -1,12 +1,12 @@
 <script>
-  import { onMount } from 'svelte';
-  import axios from 'axios';
+  import { onMount } from "svelte";
+  import axios from "axios";
 
-  let loginBtn = '';
+  let loginBtn = "";
 
   onMount(async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('state')) {
+    if (urlParams.has("state")) {
       await handleAuthCallback(urlParams);
       return;
     }
@@ -15,7 +15,7 @@
 
   async function getLoginBtn() {
     try {
-      const res = await axios.get('http://localhost:8080/auth/login', {
+      const res = await axios.get("http://localhost:8080/auth/login", {
         withCredentials: true,
       });
       loginBtn = res.data;
@@ -25,12 +25,12 @@
   }
 
   async function handleAuthCallback(urlParams) {
-    const res = await axios.get('http://localhost:8080/auth', {
+    const res = await axios.get("http://localhost:8080/auth", {
       withCredentials: true,
       params: {
-        state: urlParams.get('state'),
-        code: urlParams.get('code'),
-        scope: urlParams.get('scope'),
+        state: urlParams.get("state"),
+        code: urlParams.get("code"),
+        scope: urlParams.get("scope"),
       },
     });
     console.log(res.data);
@@ -38,19 +38,16 @@
 
   async function loginCheck() {
     try {
-      const res = await axios.get('http://localhost:8080/auth/user-details', {
+      const res = await axios.get("http://localhost:8080/auth/user-details", {
         withCredentials: true,
       });
       console.log(res);
-      alert(res.data.email)
+      alert(res.data.email);
     } catch (e) {
       console.error(e);
     }
   }
 </script>
-
-<style>
-</style>
 
 <svelte:head>
   <title>Mr. Wood's Biology Page</title>
@@ -59,3 +56,6 @@
 <h3>Login</h3>
 {@html loginBtn}
 <button on:click={loginCheck}>login check</button>
+
+<style>
+</style>

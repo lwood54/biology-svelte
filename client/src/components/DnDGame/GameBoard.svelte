@@ -1,26 +1,38 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
-  import type { ColHeadings, Pieces, DND_Store } from "../types/DnDTypes";
-  import { shuffleArray, hasClass } from "../helpers";
+  import type { ColHeadings, Pieces, DND_Store } from "../../types/DnDTypes";
+  import { shuffleArray, hasClass } from "../../helpers";
+  import Modal from "../UI/Modal.svelte";
 
   export let colHeadings: ColHeadings;
   export let pieces: Pieces;
   export let round: number;
   export let title: string;
+
   // export let dnd_store: SvelteStore<DND_Store>; // TODO: not seeing methods defined in type
   export let dnd_store;
 
   let piecesArray: Array<Pieces> = [];
+
   let piecesLeft = 30;
+  let modalOpen = false;
+  let wonRound = true; // TODO: fix bug that entire score resets if you go to round 2, but then fail round 2
+  // desired outcome: you keep round 1 score, and only reset round 2. may require re-working
+  // how total is tracked in store.
 
   const dispatch = createEventDispatcher();
 
   $: if (piecesLeft <= 15) {
-    // if current round is 1, then change to 2, else change to 3
-    round = round === 1 ? 2 : 3;
-    dispatch("checkround", round);
+    if (wonRound) {
+      round = round === 1 ? 2 : 3;
+      console.log("how many times does this run?");
+      dispatch("checkround", round);
+    } else {
+      modalOpen = true;
+    }
   }
+
   $: {
     if (!$dnd_store.firstLoad && round === 1) {
       // reset only if game has been loaded and user is back to round 1
@@ -44,14 +56,16 @@
       e.dataTransfer.setData("text", e.target.id);
     }
   };
+
   const dropItem = (e) => {
     // define pieces container to allow drop of item back into original spot
     let isPiecesContainer = hasClass(e.target, "pieces-container");
-    // let parent = e.target.parentNode;
     let dragItemId = e.dataTransfer.getData("text");
     let dragItem = document.getElementById(dragItemId);
-    // if target to drop in is empty or the target is the pices container, you can drop item in
-    if (!e.target.firstChild || isPiecesContainer) {
+    let targetIsImage = e.target.tagName === "IMG";
+    // if target to drop in is not an image, is empty or the target is the pices container,
+    // you can drop item into target
+    if (!targetIsImage && (!e.target.firstChild || isPiecesContainer)) {
       // if the target is not the pieces container
       if (!isPiecesContainer) {
         // setting to static position so the div will be relative to parent
@@ -111,14 +125,26 @@
           ? document.getElementById("piecesCont1")
           : document.getElementById("piecesCont2");
       piecesLeft = checkPiecesLeft(piecesCont);
+      checkLoser();
     }
   };
-  // const allowDrop = (e) => {
-  // 	e.preventDefault();
-  // };
+
+  const checkLoser = () => {
+    if (round === 1 && $dnd_store.round1Wrong >= 5) {
+      wonRound = false;
+    } else if (round === 2 && $dnd_store.round2Wrong >= 5) {
+      wonRound = false;
+    }
+  };
+
   const handleDrag = (e: DragEvent) => {
     (e.target as HTMLElement).style.cursor = "grabbing";
   };
+
+  // const allowDrop = (e) => {
+  //   e.preventDefault();
+  // };
+
   const checkIsMatch = (
     target: HTMLElement,
     dragItem: HTMLElement
@@ -142,8 +168,59 @@
     const numChildNodes = el.childNodes.length;
     return numChildNodes;
   };
+
+  const toggleModal = () => {
+    modalOpen = !modalOpen;
+    clearTargets();
+    piecesArray = [...pieces];
+    piecesArray = shuffleArray(piecesArray);
+    dnd_store.resetScores();
+    piecesLeft = 30;
+    // resetting wonRound to initial state
+    wonRound = true;
+  };
+
+  const clearTargets = () => {
+    let arrayOfTargets = document.getElementsByClassName("target");
+    for (let i = 0; i < 15; i++) {
+      if (arrayOfTargets[i].firstChild) {
+        let isImage =
+          (arrayOfTargets[i].firstChild.firstChild as HTMLElement).tagName ===
+          "IMG";
+        let dragItem = arrayOfTargets[i].firstChild as HTMLElement;
+        if (isImage) {
+          let imgEl = dragItem.firstChild as HTMLElement;
+          dragItem.style.position = "absolute";
+          dragItem.style.backgroundColor = "#D8D8D8";
+          dragItem.style.color = "rgb(15, 21, 21)";
+          dragItem.style.boxShadow = "1px 2px 3px black";
+          imgEl.style.cursor = "move";
+          imgEl.setAttribute("draggable", "true");
+        }
+        dragItem.style.position = "absolute";
+        dragItem.style.backgroundColor = "#D8D8D8";
+        dragItem.style.color = "rgb(15, 21, 21)";
+        dragItem.style.boxShadow = "1px 2px 3px black";
+        dragItem.style.cursor = "move";
+        dragItem.setAttribute("draggable", "true");
+        let piecesContainer =
+          round === 1
+            ? document.getElementById("piecesCont1")
+            : document.getElementById("piecesCont2");
+        piecesContainer.appendChild(dragItem);
+      }
+    }
+  };
 </script>
 
+<svelte:head>
+  <title>{title}</title>
+</svelte:head>
+
+{#if modalOpen}
+  <Modal title="Alert" on:closeModal={toggleModal} />
+{/if}
+<button on:click={clearTargets}>clear targets</button>
 <div class="game-page" on:drop={dropItem} on:dragover|preventDefault>
   <div class="target-container">
     <div class="column c1">
@@ -160,21 +237,57 @@
     </div>
     <div class="column c3">
       <h3 class="colHeading">{colHeadings.col3Heading}</h3>
-      <div id="t7" class="target col3" on:drop={dropItem} />
-      <div id="t8" class="target col3" on:drop={dropItem} />
-      <div id="t9" class="target col3" on:drop={dropItem} />
+      <div
+        id="t7"
+        class="target col3"
+        on:drop={dropItem}
+        on:dragover|preventDefault />
+      <div
+        id="t8"
+        class="target col3"
+        on:drop={dropItem}
+        on:dragover|preventDefault />
+      <div
+        id="t9"
+        class="target col3"
+        on:drop={dropItem}
+        on:dragover|preventDefault />
     </div>
     <div class="column c4">
       <h3 class="colHeading">{colHeadings.col4Heading}</h3>
-      <div id="t10" class="target col4" on:drop={dropItem} />
-      <div id="t11" class="target col4" on:drop={dropItem} />
-      <div id="t12" class="target col4" on:drop={dropItem} />
+      <div
+        id="t10"
+        class="target col4"
+        on:drop={dropItem}
+        on:dragover|preventDefault />
+      <div
+        id="t11"
+        class="target col4"
+        on:drop={dropItem}
+        on:dragover|preventDefault />
+      <div
+        id="t12"
+        class="target col4"
+        on:drop={dropItem}
+        on:dragover|preventDefault />
     </div>
     <div class="column c5">
       <h3 class="colHeading">{colHeadings.col5Heading}</h3>
-      <div id="t13" class="target col5" on:drop={dropItem} />
-      <div id="t14" class="target col5" on:drop={dropItem} />
-      <div id="t15" class="target col5" on:drop={dropItem} />
+      <div
+        id="t13"
+        class="target col5"
+        on:drop={dropItem}
+        on:dragover|preventDefault />
+      <div
+        id="t14"
+        class="target col5"
+        on:drop={dropItem}
+        on:dragover|preventDefault />
+      <div
+        id="t15"
+        class="target col5"
+        on:drop={dropItem}
+        on:dragover|preventDefault />
     </div>
   </div>
 
@@ -231,9 +344,6 @@
     </div>
   </div>
 </div>
-<svelte:head>
-  <title>{title}</title>
-</svelte:head>
 
 <style>
   @import url("https://fonts.googleapis.com/css2?family=Spartan:wght@100;200;300;400;500&display=swap");
