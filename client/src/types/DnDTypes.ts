@@ -18,10 +18,9 @@ interface PicCard {
   alt: string;
 }
 
-export interface Pieces extends DefCard, HintCard, PicCard {
+export interface Piece extends DefCard, HintCard, PicCard {
   id: string;
   col: string;
-  [Symbol.iterator](): any; // this works, but is not ideal?
 }
 
 export interface DND_Store {

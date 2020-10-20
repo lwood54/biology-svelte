@@ -1,5 +1,5 @@
 // shuffle items in any array
-export const shuffleArray = (array: any[]): any[] => {
+export function shuffleArray<T>(array: T[]): T[] {
   // copy array to manipulate
   let arrayCopy = [...array];
   let mixedArray = [];

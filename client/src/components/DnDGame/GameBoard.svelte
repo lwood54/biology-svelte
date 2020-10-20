@@ -1,12 +1,12 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
-  import type { ColHeadings, Pieces, DND_Store } from "../../types/DnDTypes";
+  import type { ColHeadings, Piece } from "../../types/DnDTypes";
   import { shuffleArray, hasClass } from "../../helpers";
   import Modal from "../UI/Modal.svelte";
 
   export let colHeadings: ColHeadings;
-  export let pieces: Pieces;
+  export let pieces: Piece[];
   export let round: number;
   export let title: string;
 
@@ -14,7 +14,7 @@
   // TODO: not seeing methods defined in type
   export let dnd_store;
 
-  let piecesArray: Array<Pieces> = [];
+  let piecesArray: Array<Piece> = [];
 
   let piecesLeft = 30;
   let roundCorrect = 0;
