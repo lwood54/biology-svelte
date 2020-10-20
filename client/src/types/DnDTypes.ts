@@ -23,6 +23,8 @@ export interface Piece extends DefCard, HintCard, PicCard {
   col: string;
 }
 
+// TODO: only the properties are getting read when this interface is used.
+// method types not getting read
 export interface DND_Store {
 	totalCorrect: number;
   	totalWrong: number;
